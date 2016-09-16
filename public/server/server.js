@@ -8,5 +8,5 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(express.static(`${__dirname}/../../public/client`));
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 8080;
 app.listen(port);

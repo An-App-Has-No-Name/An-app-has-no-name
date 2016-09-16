@@ -1,15 +1,16 @@
-import React from 'react'
-import { render } from 'react-dom'
-import { Provider } from 'react-redux'
-import { createStore } from 'redux'
-import profile from './reducers'
-import App from './components/stuff'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import { Router, browserHistory } from 'react-router';
+import reducers from './reducers';
+import routes from './routes';
 
-let store = createStore(profile)
+const createStoreWithMiddleware = applyMiddleware()(createStore);
 
-render(
-  <Provider store={store}>
-    <App />
+ReactDOM.render(
+  <Provider store={createStoreWithMiddleware(reducers)}>
+    <Router history={browserHistory} routes={routes}/>
   </Provider>,
   document.getElementById('container')
 )

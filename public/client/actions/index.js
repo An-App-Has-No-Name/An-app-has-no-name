@@ -1,7 +1,11 @@
-export function selectProfile(profile) {
-  console.log(profile)
+'use strict';
+
+export const FETCH_CATEGORIES = 'FETCH_CATEGORIES';
+
+export function selectCategory(questions) {
+
   return {
-    type: 'PERSON_SELECTED',
-    payload: profile
-  }
+    type: FETCH_CATEGORIES,
+    payload: questions
+  };
 }

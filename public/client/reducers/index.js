@@ -1,9 +1,13 @@
+'user strict';
+
 import { combineReducers } from 'redux';
-import profiles from './reducer_profile';
-import activePerson from './reducer_active_person';
+import QuestionsReducer from './reducer_questions';
+import ActiveQuestion from './reducer_active_question';
+import CategoriesListReducer from './reducer_categoriesList';
 
 const rootReducer = combineReducers({
-  profiles,
-  activePerson
+  questions: QuestionsReducer,
+  activeQuestion: ActiveQuestion,
+  categories: CategoriesListReducer
 });
 export default rootReducer;
