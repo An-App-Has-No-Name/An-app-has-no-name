@@ -5,9 +5,13 @@
   "main": "index.jsx",
   "scripts": {
     "lint": "./node_modules/.bin/eslint",
-    "start": "nodemon ./public/server/server.js",
+    "start": "node ./public/server/server.js",
     "postinstall": "node ./public/server/deploy"
   },
+  "presets": [
+    "es2015",
+    "stage-2"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mrinalini-m/An-app-has-no-name.git"
@@ -20,10 +24,12 @@
   },
   "homepage": "https://github.com/mrinalini-m/An-app-has-no-name#readme",
   "devDependencies": {
-    "babel-core": "^6.2.1",
-    "babel-loader": "^6.2.0",
+    "babel-core": "^6.14.0",
+    "babel-loader": "^6.2.5",
     "babel-preset-es2015": "^6.1.18",
-    "babel-preset-react": "^6.1.18",
+    "babel-preset-stage-2": "^6.13.0",
+    "babel-preset-react": "^6.11.1",
+    "babel-polyfill": "^6.0.0",
     "chai": "^3.5.0",
     "chai-jquery": "^2.0.0",
     "eslint": "^3.5.0",
@@ -40,13 +46,11 @@
   },
   "dependencies": {
     "axios": "^0.14.0",
-    "babel": "^6.5.2",
     "babel-core": "^6.14.0",
-    "babel-plugin-transform-class-properties": "^6.4.0",
-    "babel-plugin-transform-runtime": "^6.4.3",
-    "babel-polyfill": "^6.3.14",
-    "babel-preset-stage-0": "^6.3.13",
-    "babel-register": "^6.14.0",
+    "babel-loader": "^6.2.5",
+    "babel-preset-es2015": "^6.1.18",
+    "babel-preset-stage-2": "^6.13.0",
+    "babel-preset-react": "^6.11.1",
     "body-parser": "^1.15.2",
     "child-process": "^1.0.2",
     "concurrently": "^2.2.0",

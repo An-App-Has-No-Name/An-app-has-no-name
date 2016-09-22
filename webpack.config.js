@@ -2,20 +2,22 @@
 var Webpack = require('webpack');
 var path = require('path');
 var mainPath = path.resolve(__dirname, 'public','client', 'index.jsx');
-var buildPath = path.resolve(__dirname, 'public', 'build');
+// require('babel-polyfill');
 
 const config = {
   entry: [
 
     //hot style updates
+
      'webpack/hot/dev-server',
      'webpack-dev-server/client?http://localhost:8080',
     './public/client/index.jsx'
   ],
   output: {
-    path: buildPath,
+    path: path.resolve(__dirname, 'public', 'build'),
+    pathinfo: true,
+    publicPath: '/build/',
     filename: 'bundle.js',
-    publicPath: '/build/'
   },
   debug: true,
   devtool: 'source-map',
@@ -24,7 +26,7 @@ const config = {
       exclude: /node_modules/,
       loader: 'babel',
       query: {
-        presets: ['react', 'es2015', 'stage-1']
+        presets: ['react', 'es2015', 'stage-2']
       }
     }]
   },

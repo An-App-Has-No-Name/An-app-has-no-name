@@ -1,7 +1,13 @@
+'use strict';
 const _ = require('lodash');
 
 module.exports = {
-  categoriesList: [
+
+  randomize: (array, amount) => {
+    return _.shuffle(array).slice(0, amount);
+  },
+
+  categoriesList:  [
     'General Knowledge',
     'Entertainment: Books',
     'Entertainment: Film',
@@ -24,12 +30,6 @@ module.exports = {
     'Animals',
     'Vehicles',
   ],
-
-  randomize: (array, amount) => {
-    return _.shuffle(array).slice(0, amount);
-  },
-
-
 
   getRandomCategories: () => {
     return module.exports.randomize(module.exports.categoriesList, 5);
@@ -61,7 +61,6 @@ module.exports = {
     if (!hard) {
       hard = medium[3];
     }
-
 
     result = result.concat(easy, medium, hard);
     return result;

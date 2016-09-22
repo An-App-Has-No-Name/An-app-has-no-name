@@ -1,3 +1,5 @@
+'use strict';
+
 if (process.env.NODE_ENV === 'production') {
   const path = require('path');
   const deployConfig = path.resolve(__dirname, '../../webpack.production.config.js');
