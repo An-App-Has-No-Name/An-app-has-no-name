@@ -4,7 +4,7 @@ module.exports = {
         "es6": true
     },
     "extends": [
-        "eslint:recommended", 
+        "eslint:recommended",
         "airbnb",
         "plugin:import/errors",
         "plugin:import/warnings"
@@ -244,6 +244,7 @@ module.exports = {
             "error",
             "always"
         ],
+        "react/require-extension": "off",
         "require-jsdoc": "off",
         "rest-spread-spacing": "error",
         "semi": "off",
