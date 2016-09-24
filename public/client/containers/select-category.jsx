@@ -9,7 +9,7 @@ import { fetchQuestions } from '../actions/index';
 const renderMultiselect = ({ input, ...rest }) =>
   <Multiselect {...input}
     onBlur={() => input.onBlur()}
-    value={input.value || []} 
+    value={input.value || []}
     {...rest}
   />
 
@@ -48,12 +48,12 @@ class SelectCategories extends Component {
   submit(values) {
     this.fetchQuestions(values.categories);
     browserHistory.push('/play');
-  }  
+  }
 
   render() {
     const { handleSubmit, pristine, reset, submitting } = this.props;
     return (
-      <div>  
+      <div>
         <form onSubmit={handleSubmit(this.submit)}>
           <div>
             <label>Select Categories</label>
@@ -64,7 +64,7 @@ class SelectCategories extends Component {
             />
           </div>
           <div>
-             <button type="submit" disabled={pristine || submitting}>Play</button> 
+            <button type="submit" disabled={pristine || submitting}>Play</button> 
             <button type="button" disabled={pristine || submitting} onClick={reset}>Reset Values
             </button>
           </div>
@@ -79,5 +79,3 @@ const SelectCatForm = reduxForm({
 })(SelectCategories);
 
 export default connect(null, {fetchQuestions})(SelectCatForm);
-
-

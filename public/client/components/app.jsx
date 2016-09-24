@@ -9,20 +9,24 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    let room = '12345'
-    this.socket = io();
-
+    console.log(this.state.room)
     // this.socket.on('room', (socket) => {
     //   console.log('I am room')
     // });
 
-    this.socket.emit('room', room);
+
+  this.socket = io();
+
 
     this.socket.on('message', message => {
       this.setState({messages: [message, ...this.state.messages]});
       console.log("i am socket", message, room)
 
     });
+    this.socket.on('newGameCreated', body =>{
+      console.log('in app room ', body)
+      // this.setState({room: [body.gameId, ...this.state.room]});
+    })
   }
 
   addUser() {
