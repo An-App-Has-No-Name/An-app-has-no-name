@@ -55,7 +55,7 @@ category_num.forEach((item, i) => {
       const response_code = body['response_code'];
         if (response_code === 0) {
           body = JSON.stringify(body['results']);
-          body = body.slice(1,body.length-1) + ',';
+          body = body.slice(1, body.length-1) + ',';
           console.log(body);
           fs.appendFile(filePath, body, function() {
           });

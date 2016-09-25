@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
-import ReactCountDownClock from 'react-countdown-clock';
-import { changeScore, incrementScore, decrementScore } from '../actions/index';
 import { bindActionCreators } from 'redux';
+import ReactCountDownClock from 'react-countdown-clock';
+import _ from 'lodash';
+import { changeScore, incrementScore, decrementScore } from '../actions/index';
 import { unescapeHelper } from '../helpers/lodashHelper';
 
 
@@ -48,7 +48,7 @@ class QuestionDetail extends Component {
     const props = this.props.question;
     if(!props){
       return (
-        <div></div>
+        <div />
       );
     }
     const question = unescapeHelper(props.question);
@@ -62,12 +62,14 @@ class QuestionDetail extends Component {
         <h3>Question:</h3>
         <h3>{question}</h3>
           {this.renderAnswer(answerArray)}
-        <ReactCountDownClock seconds={15}
-                     color="blue"
-                     alpha={1.0}
-                     showMilliseconds={false}
-                     size={75}
-                     onComplete={this.props.checkCompleted.bind(this)} />
+          <ReactCountDownClock 
+            seconds={15}
+            color="blue"
+            alpha={1.5}
+            showMilliseconds={false}
+            size={75}
+            onComplete={this.props.checkCompleted.bind(this)}
+          />
       </div>
     );
   }

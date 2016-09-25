@@ -62,3 +62,18 @@ th {
 .clicked {
 
 }
+
+label {
+  color: #ffffff;
+  margin: 20px;
+}
+
+button {
+  margin: 20px;
+}
+
+.customForm {
+  border: 1px solid white;
+  margin: 20px;
+}
+

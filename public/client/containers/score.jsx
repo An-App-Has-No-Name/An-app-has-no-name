@@ -1,14 +1,8 @@
 import React, { Component }  from 'react';
-import ReactDOM from "react-dom";
 import { connect } from 'react-redux';
 import { changeScore } from '../actions/index';
-import { bindActionCreators } from 'redux';
 
 class Score extends Component {
-  constructor(props) {
-    super(props);
-  }
-
 
   componentWillMount() {
     if (!this.props.score) {
@@ -30,7 +24,7 @@ class Score extends Component {
       </div>
     );
   }
-};
+}
 
 
 function mapStateToProps(state){

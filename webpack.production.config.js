@@ -1,7 +1,8 @@
 var Webpack = require('webpack');
 var path = require('path');
+
 var nodeModulesPath = path.resolve(__dirname, 'node_modules');
-var mainPath = path.resolve(__dirname, 'public','client', 'index.jsx');
+var mainPath = path.resolve(__dirname, 'public', 'client', 'index.jsx');
 
 var config = {
 

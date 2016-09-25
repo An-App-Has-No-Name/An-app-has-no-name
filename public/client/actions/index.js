@@ -2,7 +2,8 @@
 
 import axios from 'axios';
 
-const FETCH_QUESTION = 'FETCH_QUESTION',
+const FETCH_QUESTIONS = 'FETCH_QUESTIONS',
+      FETCH_QUESTIONS_RANDOM = 'FETCH_QUESTIONS_RANDOM',
       CHANGE_SCORE = 'CHANGE_SCORE',
       INCREMENT_SCORE = 'INCREMENT_SCORE',
       DECREMENT_SCORE = 'DECREMENT_SCORE',
@@ -15,21 +16,24 @@ export function selectQuestion(question) {
     payload: question
   };
 }
-
-export function fetchQuestion(){
+export function fetchQuestionsRandCat(){
   const request = axios.get('/api/questions');
   return {
-    type: FETCH_QUESTION,
+    type: FETCH_QUESTIONS_RANDOM,
     payload:request
   };
 }
 
-// export function getScore(){
-//   return {
-//     type: 'GET_SCORE',
-//     payload:
-//   }
-// }
+export function fetchQuestions(categories){
+  console.log(categories[0], "CHECKING CAT");
+  const url = '/api/questions/' + categories[0] + '/'+ categories[1] + '/' + categories[2] + '/'+ categories[3] + '/' + categories[4];
+  const request = axios.get(url);
+  return {
+    type: FETCH_QUESTIONS,
+    payload:request,
+  };
+}
+
 // let nextQuestionId = 0
 //
 // export const addQuestion = question => {
@@ -76,7 +80,8 @@ export const decrementScore = (score, difficulty) => {
 export {
   CHANGE_SCORE,
   DECREMENT_SCORE,
+  FETCH_QUESTIONS,
+  FETCH_QUESTIONS_RANDOM,
   INCREMENT_SCORE,
-  FETCH_QUESTION,
   QUESTION_SELECTED,
 }

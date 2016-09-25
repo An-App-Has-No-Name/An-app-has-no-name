@@ -2,6 +2,7 @@
 
 const bodyParser  = require('body-parser');
 const path = require('path');
+
 const publicPath = path.resolve(__dirname, '../../public');
 
 module.exports = function(app, express) {
@@ -15,4 +16,5 @@ module.exports = function(app, express) {
   app.use(express.static(publicPath));
   app.use('/api/questions', questionRouter);
   require('./questionRoutes')(questionRouter);
+  
 };
