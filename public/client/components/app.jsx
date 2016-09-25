@@ -1,5 +1,6 @@
 import React, { Component }  from 'react';
 import QuestionList from '../containers/question-list';
+import Score from '../containers/score';
 
 export default class App extends Component {
 
@@ -15,7 +16,7 @@ export default class App extends Component {
     // });
 
 
-  this.socket = io();
+  // this.socket = io();
 
 
     this.socket.on('message', message => {
@@ -27,7 +28,14 @@ export default class App extends Component {
       console.log('in app room ', body)
       // this.setState({room: [body.gameId, ...this.state.room]});
     })
+
+    this.socket.on('playerJoined', playerJoined)
   }
+
+  playerJoined(message) {
+    console.log("success join", message)
+  }
+
 
   addUser() {
     const user = {
@@ -41,12 +49,12 @@ export default class App extends Component {
     if (e.keyCode === 13 && body) {
       const message = {
         body,
-        from: 'Thang'
+        room: this.state.room
       }
       this.setState({messages: [message, ...this.state.messages]});
 
 
-      this.socket.emit('message', body);
+      this.socket.emit('message': body);
       console.log('body',this.socket)
       e.target.value = '';
     }
@@ -61,6 +69,8 @@ export default class App extends Component {
     return (
       <div className="wrap">
         <QuestionList/>
+        <Score />
+        <div> {this.state.room} </div>
         <div> {messages} </div>
         <input type="text" onKeyUp={this.handleSubmit.bind(this)}></input>
       </div>

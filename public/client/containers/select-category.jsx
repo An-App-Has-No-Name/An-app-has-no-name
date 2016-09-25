@@ -64,7 +64,7 @@ class SelectCategories extends Component {
             />
           </div>
           <div>
-            <button type="submit" disabled={pristine || submitting}>Play</button> 
+            <button type="submit" disabled={pristine || submitting}>Play</button>
             <button type="button" disabled={pristine || submitting} onClick={reset}>Reset Values
             </button>
           </div>

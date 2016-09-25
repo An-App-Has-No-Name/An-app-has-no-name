@@ -19,7 +19,7 @@ let port = isProduction ? process.env.PORT : 9999;
 
 if (!isProduction) {
   const bundle = require('./bundle.js');
-  
+
   bundle();
 
   // bundler inside the if block because
@@ -33,7 +33,7 @@ if (!isProduction) {
   // app.all('/jeopardy/*', function (req, res) {
   //   proxy.web(req, res, {
   //     target: 'http://localhost:9999/jeopardy'
-  //   });
+  //   });fr7
   // });
 }
 
@@ -56,23 +56,26 @@ const CreateRoom = function(){
   this.join(thisGameId.toString());
   console.log('server create room', thisGameId, this.id)
 }
+const JoinRoom = function(room){
+  this.join(room)
+  io.sockets.in(room).emit('playerJoined', 'body');
+  console.log('i am thang',room);
+}
+
 io.on('connection', function (socket) {
   // socket.emit('user connected');
-
-  socket.on('message', body => {
-    console.log('req.bodyasfdsf', body);
-
-    socket.broadcast.emit('message', {
-      body,
-      from: socket.id.slice(8)
-    });
-
+  socket.on('JoinRoom', JoinRoom);
+  socket.on('CreateRoom', CreateRoom);
   // io.in('12345').emit('message', body);
+  // socket.on('message', body => {
+  //   console.log('req.bodyasfdsf', body);
+  //
+  //   socket.broadcast.in(room).emit('message', {
+  //     body,
+  //     from: socket.id.slice(8)
+  //   });
 
-  });
-
-  socket.on('CreateRoom', CreateRoom)
-
+  // });
   //  => {
   //   console.log('before join', room);
   //   console.log('socket room id', socket.id);
@@ -81,7 +84,5 @@ io.on('connection', function (socket) {
   //
   //     console.log('roomed', room);
   // });
-
-
-    console.log('client connected');
+    console.log('client connecteda ', socket.id);
 });

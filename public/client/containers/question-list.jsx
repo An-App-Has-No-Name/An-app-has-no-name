@@ -106,9 +106,7 @@ render (){
 
 function mapStateToProps(state){
   return {
-    categories: state.categories,
     questions: state.QuestionReducer,
-    modal: state.openModal
   };
 }
 
