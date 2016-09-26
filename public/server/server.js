@@ -5,6 +5,8 @@ const express = require('express');
 const httpProxy = require('http-proxy');
 require('./mongo.config');
 
+let gameSocket;
+
 const app = express();
 
 const proxy = httpProxy.createProxyServer({
@@ -50,22 +52,19 @@ const server = app.listen(port, function(){
 });
 
 const io = require('socket.io')(server);
-const CreateRoom = function(){
-  let thisGameId = (Math.random() * 10000) | 0;
-  this.emit('newGameCreated', {gameId: thisGameId, mySocketId: this.id});
-  this.join(thisGameId.toString());
-  console.log('server create room', thisGameId, this.id)
-}
-const JoinRoom = function(room){
-  this.join(room)
-  io.sockets.in(room).emit('playerJoined', 'body');
-  console.log('i am thang',room);
-}
 
-io.on('connection', function (socket) {
+
+io.set('log level',1);
+
+io.sockets.on('connection', function (socket) {
   // socket.emit('user connected');
-  socket.on('JoinRoom', JoinRoom);
-  socket.on('CreateRoom', CreateRoom);
+  gameSocket = socket;
+
+
+  gameSocket.on('JoinRoom', JoinRoom);
+  gameSocket.on('CreateRoom', CreateRoom);
+  gameSocket.on('fetchQuestions', fetchQuestions);
+
   // io.in('12345').emit('message', body);
   // socket.on('message', body => {
   //   console.log('req.bodyasfdsf', body);
@@ -86,3 +85,37 @@ io.on('connection', function (socket) {
   // });
     console.log('client connecteda ', socket.id);
 });
+
+const CreateRoom = function(data){
+
+  let thisGameId = (Math.random() * 10000) | 0;
+
+  this.emit('newGameCreated', {gameId: thisGameId, mySocketId: this.id});
+
+  this.join(thisGameId.toString());
+
+  console.log('server create room', thisGameId, this.id)
+
+  console.log('this is QuestionList', data)
+};
+
+const JoinRoom = function(data){
+
+
+    let room = gameSocket.nsp.adapter.rooms[data.gameId];
+
+    if (room) {
+      console.log('gameId',data.gameId)
+
+      console.log('this is rooms ', room);
+      this.join(data.gameId);
+
+      io.sockets.in(data.gameId).emit('playerJoined', data);
+    } else {
+      this.emit('errors', {message: "This room does not exist."});
+    }
+};
+
+const fetchQuestions = function(data) {
+  console.log('QuestionList', data)
+};

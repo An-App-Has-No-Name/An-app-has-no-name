@@ -1,6 +1,12 @@
 import React, {Component} from 'react';
 import RandamCategories from './random_categories';
 import SelectCategories from '../containers/select-category';
+
+import { connect } from 'react-redux';
+import { fetchQuestionsRandCat } from '../actions/index';
+
+
+
 import { Link } from 'react-router';
 
 
@@ -11,42 +17,82 @@ class Main extends Component {
     this.state = {
       room: '',
 
-    }
+    };
     this.getInput = this.getInput.bind(this);
     this.joinRoom = this.joinRoom.bind(this);
     this.roomGenerator = this.roomGenerator.bind(this);
-    this.addUser = this.addUser.bind(this);
+    this.gameInit = this.gameInit.bind(this);
+    this.errors = this.errors.bind(this);
+    this.playerJoined = this.playerJoined.bind(this);
+    this.newGameCreated = this.newGameCreated.bind(this);
+    this.start = this.start.bind(this);
+    this.fetchQuestionsRandCat = this.props.fetchQuestionsRandCat.bind(this);
   }
+
   componentDidMount(){
     this.socket = io();
+    this.socket.on('newGameCreated', this.newGameCreated);
+
+    this.socket.on('errors', this.errors);
+    this.socket.on('playerJoined', this.playerJoined);
   }
-  addUser(e) {
-    const user = {
-      username: e.target.value,
-    };
-    console.log('user', user)
-  }
+
   getInput(e) {
     this.setState({room: e.target.value});
   }
 
-  joinRoom(e){
-    console.log(e,'event in joinroom')
-      e.preventDefault();
-
-      this.socket.emit('JoinRoom', this.state.room);
-      console.log('room value', this.state.rooms);
-
+  newGameCreated(data) {
+    console.log('this is room ', data)
+    this.setState({room: data.gameId});
   }
 
-  roomGenerator(){
-    this.socket.emit('CreateRoom');
-    console.log('createdroom',);
+  joinRoom(e){
+    e.preventDefault();
 
-    this.socket.on('newGameCreated', body =>{
-      console.log('newGameCreated', body);
-      this.setState({room: body.gameId});
-    })
+    let data =  {
+      gameId: this.state.room
+    };
+
+    this.socket.emit('JoinRoom', data);
+    this.setState({
+      room: ''
+    });
+  }
+
+  playerJoined(data) {
+    console.log('Player Joining:', data.gameId);
+  }
+
+  roomGenerator(e){
+    e.preventDefault();
+
+    // const user = {
+    //   username: e.target.value,
+    // };
+    this.fetchQuestionsRandCat();
+    this.socket.emit('CreateRoom');
+  }
+
+  start() {
+    if(!this.props.questions){
+      console.log('loading')
+    }
+
+    // var promise = new Promise(function(resolve, reject) {
+    //
+    // });
+
+    console.log(this.props.questions)
+
+    this.socket.emit('fetchQuestions', this.props.questions);
+  }
+
+  errors(data) {
+    alert(data.message);
+  }
+
+  gameInit(data) {
+    this.setState({gameId: data.gameId, mySocketId: data.mySocketId});
   }
 
   render(){
@@ -54,20 +100,38 @@ class Main extends Component {
       <div>
         <SelectCategories />
         <RandamCategories />
-        <input type="text" placeholder="Enter username" onKeyUp={this.addUser}></input>
-        <Link onClick={this.roomGenerator} to={`/multiplayer/${this.state.room}`}>
-        <button >Generate room </button>
-        </Link>
-        <div>Room: {this.state.room}</div>
 
-          <input type="text" onSubmit={this.joinRoom} placeholder="Enter a room" value={this.state.room} onChange={this.getInput}></input>
-          <Link to={`/multiplayer/${this.state.room}`}>
-          <button type="submit" onClick={this.joinRoom} >Join room </button>
-          </Link>
+      <form >
+        <input type="text" placeholder="Enter username"></input>
+        <button onClick={this.roomGenerator}>Generate room </button>
+        <div>Room: {this.state.room}</div>
+      </form>
+
+      <form  onSubmit={ this.joinRoom }>
+        <input
+          type="text"
+          placeholder="Enter a room"
+          value={this.state.room}
+          onChange={this.getInput}>
+        </input>
+          <button type="submit">Join room</button>
+      </form>
+
+
+
+      <button onClick={this.start}>Start Game</button>
 
       </div>
+
+
     );
   }
 }
 
-export default Main;
+function mapStateToProps(state){
+  return {
+    questions: state.QuestionReducer,
+  };
+}
+
+export default connect(mapStateToProps, {fetchQuestionsRandCat})(Main);

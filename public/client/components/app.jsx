@@ -19,21 +19,14 @@ export default class App extends Component {
   // this.socket = io();
 
 
-    this.socket.on('message', message => {
-      this.setState({messages: [message, ...this.state.messages]});
-      console.log("i am socket", message, room)
+    // this.socket.on('message', message => {
+    //   this.setState({messages: [message, ...this.state.messages]});
+    //   console.log("i am socket", message, room)
+    //
+    // });
 
-    });
-    this.socket.on('newGameCreated', body =>{
-      console.log('in app room ', body)
-      // this.setState({room: [body.gameId, ...this.state.room]});
-    })
 
     this.socket.on('playerJoined', playerJoined)
-  }
-
-  playerJoined(message) {
-    console.log("success join", message)
   }
 
 
