@@ -9,7 +9,7 @@ const escapeMap = {
   "'": '&#039;' || '&rsquo;',
   '`': '&#x60;',
   'š': '&scaron;',
-
+  'Ü':'&Uuml;'
 };
 
 const unescapeMap = _.invert(escapeMap);

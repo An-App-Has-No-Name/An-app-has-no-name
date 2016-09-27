@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import Modal from 'react-modal';
 import QuestionDetail from './question-detail';
 import { selectQuestion } from '../actions/index';
+import Socket from '../socket';
 
 const customStyles = {
   content : {
@@ -27,11 +28,40 @@ class QuestionList extends Component {
     this.closeModal = this.closeModal.bind(this);
   }
 
+
+componentWillMount() {
+    Socket.on('receiveMultiplayerQuestions', (data) => {
+      console.log("roomID in QuestionList", data.roomId);
+      this.setState({roomId: data.roomId});
+    });
+}
+
+componentWillUpdate() {
+  Socket.on('receiveOpenOrder', (data) => {
+    console.log('broadcasting', data.modalOpen)
+    this.setState({
+      modalOpen: data.modalOpen,
+      question: data.question
+    });
+    this.props.selectQuestion(data.question);
+  });
+}
+
 openModal(question) {
   if (question.clicked) {
     console.log("Already cliked", question.question);
   } else {
-    this.setState({modalOpen: true});
+    // this.setState({modalOpen: true});
+
+    let data = {
+      roomId: this.state.roomId,
+      modalOpen: true,
+      question: question
+    };
+
+    // Invoke openModal at the server and send data back
+    Socket.emit('openModal', data);
+  
     question.clicked = true;
   }
 }
@@ -49,7 +79,6 @@ renderQuestion(questions) {
           key={question._id}
           onClick={() => {
               this.openModal(question)
-              this.props.selectQuestion(question)
             }
           }
           disabled={question.clicked}

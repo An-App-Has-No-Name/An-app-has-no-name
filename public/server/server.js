@@ -66,31 +66,17 @@ io.sockets.on('connection', function (socket) {
   gameSocket.on('JoinRoom', JoinRoom);
   gameSocket.on('CreateRoom', CreateRoom);
   gameSocket.on('fetchQuestions', fetchQuestions);
-
-  // io.in('12345').emit('message', body);
-  // socket.on('message', body => {
-  //   console.log('req.bodyasfdsf', body);
-  //
-  //   socket.broadcast.in(room).emit('message', {
-  //     body,
-  //     from: socket.id.slice(8)
-  //   });
-
-  // });
-  //  => {
-  //   console.log('before join', room);
-  //   console.log('socket room id', socket.id);
-  //   socket.broadcast.emit('randomRoom', room);
-  //   socket.join(room);
-  //
-  //     console.log('roomed', room);
-  // });
-    console.log('client connecteda ', socket.id);
+  gameSocket.on('openModal', openModal);
+    console.log('client connected ', socket.id);
 });
 
-const CreateRoom = function(data){
+const CreateRoom = function(){
 
   let roomId = (Math.random() * 10000) | 0;
+
+  console.log("this is room Create", typeof roomId);
+  console.log("this is room CreateString", typeof roomId.toString());
+
 
   this.join(roomId.toString());
 
@@ -118,15 +104,14 @@ const JoinRoom = function(data){
 
       // Call playerJoined at Frontend and pass room Id
       io.sockets.in(data.roomId).emit('playerJoined', data);
-
-
-
-
     } else {
       this.emit('errors', {message: "This room does not exist."});
     }
 };
-
+//
+// const leaveAndJoin = function(roomId) {
+//
+// };
 
 const fetchQuestions = function(data) {
 
@@ -134,6 +119,15 @@ const fetchQuestions = function(data) {
   //***** At this point we have the questions from the Client
 
   //broadcast data.questions and invoke the function receiveMultiplayerQuestions at Client side and send data.questions to Client.
-  console.log('oiasdfjoidas', data.roomId)
-  io.sockets.in(data.roomId).emit('receiveMultiplayerQuestions', data.questions);
+
+  io.sockets.in(data.roomId).emit('receiveMultiplayerQuestions', data);
+};
+
+
+const openModal = function(data) {
+
+  //Invoke the receiveOpenOrder at Client and send back data.modalOpen
+    console.log('opening', data.roomId, data.modalOpen, data.question);
+
+  io.sockets.in(data.roomId).emit('receiveOpenOrder', data);
 };

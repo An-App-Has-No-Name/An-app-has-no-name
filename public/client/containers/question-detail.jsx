@@ -10,9 +10,7 @@ import { unescapeHelper } from '../helpers/lodashHelper';
 class QuestionDetail extends Component {
   constructor (props) {
     super(props);
-    this.state = {
-      modalOpen: false,
-    };
+  
     this.checkAnswer = this.checkAnswer.bind(this);
   }
 
@@ -62,7 +60,7 @@ class QuestionDetail extends Component {
         <h3>Question:</h3>
         <h3>{question}</h3>
           {this.renderAnswer(answerArray)}
-          <ReactCountDownClock 
+          <ReactCountDownClock
             seconds={15}
             color="blue"
             alpha={1.5}

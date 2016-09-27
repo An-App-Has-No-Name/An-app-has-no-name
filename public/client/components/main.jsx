@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import RandamCategories from './random_categories';
 import SelectCategories from '../containers/select-category';
-
+import Socket from '../socket';
 import { connect } from 'react-redux';
 import { fetchQuestionsRandCat, fetchQuestionsMultiplayer } from '../actions/index';
 
@@ -32,20 +32,18 @@ class Main extends Component {
   }
 
   componentDidMount(){
-    this.socket = io();
-    this.socket.on('newGameCreated', this.newGameCreated);
+
+    // this.setState({socket: Socket})
+    Socket.on('newGameCreated', this.newGameCreated);
 
 
-    this.socket.on('errors', this.errors);
+    Socket.on('errors', this.errors);
 
     //Listen to playerJoined at Server ==> invoke this.playerJoined
-    this.socket.on('playerJoined', this.playerJoined);
-    this.socket.on('receiveMultiplayerQuestions', this.receiveMultiplayerQuestions);
+    Socket.on('playerJoined', this.playerJoined);
+    Socket.on('receiveMultiplayerQuestions', this.receiveMultiplayerQuestions);
 
 
-  }
-
-  componentWillUpdate() {
   }
 
   getInput(e) {
@@ -67,7 +65,7 @@ class Main extends Component {
     };
 
     //Call JoinRoom at server and send the data Object .
-    this.socket.emit('JoinRoom', data);
+    Socket.emit('JoinRoom', data);
     this.setState({
       roomId: ''
     });
@@ -94,11 +92,8 @@ class Main extends Component {
   roomGenerator(e){
     e.preventDefault();
 
-
     this.fetchQuestionsRandCat();
-    this.socket.emit('CreateRoom');
-
-
+    Socket.emit('CreateRoom');
   }
 
   start() {
@@ -110,10 +105,9 @@ class Main extends Component {
 
     // console.log(this.props.questions)
 
-    // this.socket.on('receiveMultiplayerQuestions', (questions) => {
+    // Socket.on('receiveMultiplayerQuestions', (questions) => {
     //   console.log("broadcasting", questions);
     // });
-    console.log("aosidjfosjdiogjsdojg aopdjgoj dpogvja odsjodsjoajdsoijaodsj oajsdof ajoi joisd jfoasjdof")
 
     const data = {
       roomId: this.state.roomId,
@@ -121,7 +115,7 @@ class Main extends Component {
     };
 
     //Call fetchQuestions at Server and send the data back
-    this.socket.emit('fetchQuestions', data);
+    Socket.emit('fetchQuestions', data);
   }
 
 
@@ -130,10 +124,9 @@ class Main extends Component {
     alert(data.message);
   }
 
-  receiveMultiplayerQuestions(questions) {
-    console.log("broadcasting", questions);
-      this.fetchQuestionsMultiplayer(questions);
-    // this.setState({questions: questions});
+  receiveMultiplayerQuestions(data) {
+    console.log("broadcasting", data);
+      this.fetchQuestionsMultiplayer(data.questions);
   }
 
   gameInit(data) {
@@ -147,8 +140,7 @@ class Main extends Component {
         <RandamCategories />
 
       <form >
-        <input type="text" placeholder="Enter username"></input>
-        <button onClick={this.roomGenerator}>Generate room </button>
+        <button onClick={this.roomGenerator}>Generate room</button>
         <div>Room: {this.state.roomId}</div>
       </form>
 
