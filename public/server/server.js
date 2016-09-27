@@ -112,12 +112,12 @@ const JoinRoom = function(data){
       console.log('roomId',data.roomId)
 
       console.log('this is rooms ', room);
-      this.join(room.roomId);
+      this.join(data.roomId);
       // ***** Player already Joined
 
 
       // Call playerJoined at Frontend and pass room Id
-      io.sockets.in(room.roomId).emit('playerJoined', data);
+      io.sockets.in(data.roomId).emit('playerJoined', data);
 
 
 
@@ -134,5 +134,6 @@ const fetchQuestions = function(data) {
   //***** At this point we have the questions from the Client
 
   //broadcast data.questions and invoke the function receiveMultiplayerQuestions at Client side and send data.questions to Client.
-  gameSocket.emit('receiveMultiplayerQuestions', data.questions);
+  console.log('oiasdfjoidas', data.roomId)
+  io.sockets.in(data.roomId).emit('receiveMultiplayerQuestions', data.questions);
 };
