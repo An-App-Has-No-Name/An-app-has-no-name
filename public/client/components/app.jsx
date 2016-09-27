@@ -10,9 +10,7 @@ export default class App extends Component {
   }
 
 
-  componentWillMount() {
 
-  }
   addUser() {
     const user = {
       username: socket.id
