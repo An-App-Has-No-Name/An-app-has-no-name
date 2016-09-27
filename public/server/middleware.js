@@ -15,6 +15,7 @@ module.exports = function(app, express) {
 
   app.use(express.static(publicPath));
   app.use('/api/questions', questionRouter);
+
   require('./questionRoutes')(questionRouter);
-  
+
 };

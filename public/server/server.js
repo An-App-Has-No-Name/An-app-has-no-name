@@ -3,6 +3,8 @@
 //proxy between express and webpack-dev-server
 const express = require('express');
 const httpProxy = require('http-proxy');
+
+require('./questionRoutes');
 require('./mongo.config');
 
 let gameSocket;
@@ -88,34 +90,49 @@ io.sockets.on('connection', function (socket) {
 
 const CreateRoom = function(data){
 
-  let thisGameId = (Math.random() * 10000) | 0;
+  let roomId = (Math.random() * 10000) | 0;
 
-  this.emit('newGameCreated', {gameId: thisGameId, mySocketId: this.id});
+  this.join(roomId.toString());
 
-  this.join(thisGameId.toString());
+  //invoke 'newGameCreated' at Client side and send gameId & socketId
+  this.emit('newGameCreated', {roomId: roomId, mySocketId: this.id});
 
-  console.log('server create room', thisGameId, this.id)
+  //then join to the room
 
-  console.log('this is QuestionList', data)
+  console.log('server create room', roomId, this.id)
 };
+
 
 const JoinRoom = function(data){
 
 
-    let room = gameSocket.nsp.adapter.rooms[data.gameId];
+    let room = gameSocket.nsp.adapter.rooms[data.roomId];
 
-    if (room) {
-      console.log('gameId',data.gameId)
+    if (room !== undefined) {
+      console.log('roomId',data.roomId)
 
       console.log('this is rooms ', room);
-      this.join(data.gameId);
+      this.join(room.roomId);
+      // ***** Player already Joined
 
-      io.sockets.in(data.gameId).emit('playerJoined', data);
+
+      // Call playerJoined at Frontend and pass room Id
+      io.sockets.in(room.roomId).emit('playerJoined', data);
+
+
+
+
     } else {
       this.emit('errors', {message: "This room does not exist."});
     }
 };
 
+
 const fetchQuestions = function(data) {
-  console.log('QuestionList', data)
+
+
+  //***** At this point we have the questions from the Client
+
+  //broadcast data.questions and invoke the function receiveMultiplayerQuestions at Client side and send data.questions to Client.
+  gameSocket.emit('receiveMultiplayerQuestions', data.questions);
 };

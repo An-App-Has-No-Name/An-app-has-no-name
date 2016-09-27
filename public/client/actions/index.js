@@ -7,7 +7,8 @@ const FETCH_QUESTIONS = 'FETCH_QUESTIONS',
       CHANGE_SCORE = 'CHANGE_SCORE',
       INCREMENT_SCORE = 'INCREMENT_SCORE',
       DECREMENT_SCORE = 'DECREMENT_SCORE',
-      QUESTION_SELECTED = 'QUESTION_SELECTED';
+      QUESTION_SELECTED = 'QUESTION_SELECTED',
+      FETCH_MULTI_QUESTIONS = 'FETCH_MULTI_QUESTIONS';
 
 
 export function selectQuestion(question) {
@@ -34,6 +35,15 @@ export function fetchQuestions(categories){
   };
 }
 
+
+export function fetchQuestionsMultiplayer(questions) {
+
+  console.log('fetching from multiplayer', questions)
+  return {
+    type: FETCH_MULTI_QUESTIONS,
+    payload:questions,
+  };
+}
 // let nextQuestionId = 0
 //
 // export const addQuestion = question => {
@@ -84,4 +94,5 @@ export {
   FETCH_QUESTIONS_RANDOM,
   INCREMENT_SCORE,
   QUESTION_SELECTED,
+  FETCH_MULTI_QUESTIONS
 }

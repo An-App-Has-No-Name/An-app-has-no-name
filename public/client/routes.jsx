@@ -8,6 +8,6 @@ export default (
   <Router history={browserHistory}>
     <Route path="/" component={Main}  />
     <Route path="/play" component={App}  />
-    <Route path={`/multiplayer/:room`} component={App} />
+    <Route path="/multiplayer" component={App} />
   </Router>
 );

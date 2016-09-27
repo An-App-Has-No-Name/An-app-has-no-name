@@ -1,10 +1,11 @@
 'use strict';
 const mongoConfig = require('./mongo.config');
 const utils = require('./utils');
+const multiplayer = require('./server');
 
 module.exports = function(appRoute) {
 
-  appRoute.route('/').get(function(req, res) {
+  appRoute.route('/').get((req, res) => {
     let questionList = {};
     mongoConfig.findQuestionRandCat((data, categoriesList) => {
       console.log('categoriesList', categoriesList)
@@ -17,8 +18,8 @@ module.exports = function(appRoute) {
       res.send(questionList);
     });
   });
-  
-  appRoute.route('/:cat1/:cat2/:cat3/:cat4/:cat5/').get(function(req, res) {
+
+  appRoute.route('/:cat1/:cat2/:cat3/:cat4/:cat5/').get((req, res) =>  {
 
     const categoriesList = [];
     for (let key of Object.keys(req.params)) {
@@ -40,5 +41,18 @@ module.exports = function(appRoute) {
 
       res.send(questionList);
     });
+  });
+
+
+  appRoute.route('/multiplayer').get((req, res) => {
+
+    // multiplayer.giveQuestions((data) => {
+    //   console.log('routing', data)
+    //   res.send(data);
+    // });
+
+    console.log("Sending back from multiplayer");
+    res.send('Sending back from multiplayer');
+
   });
 };

@@ -9,27 +9,10 @@ export default class App extends Component {
     this.state = {messages: []};
   }
 
-  componentDidMount() {
-    console.log(this.state.room)
-    // this.socket.on('room', (socket) => {
-    //   console.log('I am room')
-    // });
 
+  componentWillMount() {
 
-  // this.socket = io();
-
-
-    // this.socket.on('message', message => {
-    //   this.setState({messages: [message, ...this.state.messages]});
-    //   console.log("i am socket", message, room)
-    //
-    // });
-
-
-    this.socket.on('playerJoined', playerJoined)
   }
-
-
   addUser() {
     const user = {
       username: socket.id
