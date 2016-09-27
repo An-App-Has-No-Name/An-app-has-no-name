@@ -67,6 +67,7 @@ io.sockets.on('connection', function (socket) {
   gameSocket.on('CreateRoom', CreateRoom);
   gameSocket.on('fetchQuestions', fetchQuestions);
   gameSocket.on('openModal', openModal);
+  gameSocket.on('closeModal', closeModal);
     console.log('client connected ', socket.id);
 });
 
@@ -130,4 +131,10 @@ const openModal = function(data) {
     console.log('opening', data.roomId, data.modalOpen, data.question);
 
   io.sockets.in(data.roomId).emit('receiveOpenOrder', data);
+};
+
+const closeModal = function(data) {
+
+  //Invoke the receiveCloseOrder at Client and send back data.modalOpen
+  io.sockets.in(data.roomId).emit('receiveCloseOrder', data);
 };
