@@ -1,9 +1,9 @@
 'user strict';
-import { QUESTION_SELECTED } from '../constants/index';
+import { CATEGORY_SELECTED } from '../actions/index';
 
 export default function(state = null, action) {
   switch(action.type) {
-    case QUESTION_SELECTED:
+    case 'CATEGORY_SELECTED':
     return action.payload;
   }
   return state;

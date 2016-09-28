@@ -3,7 +3,7 @@
 const fs = require('fs'),
       request = require('request'),
       path = require('path'),
-      {OPEN_TRIVIA_SESSION_TOKEN} = require('./config');
+      {OPEN_TRIVIA_SESSION_TOKEN} = require('./../config');
 //Commenting the following out because 'html2json' module will run an error and it's not something we need again. So it hasn't been put in pacakge.json.
 
 // const html2json = require('html2json').html2json;
@@ -55,7 +55,7 @@ category_num.forEach((item, i) => {
       const response_code = body['response_code'];
         if (response_code === 0) {
           body = JSON.stringify(body['results']);
-          body = body.slice(1,body.length-1) + ',';
+          body = body.slice(1, body.length-1) + ',';
           console.log(body);
           fs.appendFile(filePath, body, function() {
           });

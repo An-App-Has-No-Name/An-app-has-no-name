@@ -59,16 +59,17 @@ module.exports = {
     let hard = module.exports.randomize(hardQuestion, 1);
 
     if (hard === null) {
-      hard = medium[2];
-      hard[0].difficulty = 500;
+      hard = mediumQuestion;
+      hard[2].difficulty = 500;
     }
-    easy[0].difficulty = 100;
-    easy[1].difficulty = 200;
-    medium[0].difficulty = 300;
-    medium[1].difficulty = 400;
-    hard[0].difficulty = 500;
 
     result = result.concat(easy, medium, hard);
+
+    let difficultyScore = 0;
+    result.map(question => {
+      question.difficulty = (difficultyScore += 100);
+      question.clicked = false;
+    });
     return result;
   }
 };

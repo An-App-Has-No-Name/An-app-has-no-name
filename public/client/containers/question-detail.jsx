@@ -1,39 +1,39 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
+import { bindActionCreators } from 'redux';
 import ReactCountDownClock from 'react-countdown-clock';
-
-
+import _ from 'lodash';
+import { changeScore, incrementScore, decrementScore } from '../actions/index';
+import { unescapeHelper } from '../helpers/lodashHelper';
+import Socket from '../socket';
 
 
 class QuestionDetail extends Component {
   constructor (props) {
     super(props);
-    this.state = {
-      modalOpen: false,
-    };
+
     this.checkAnswer = this.checkAnswer.bind(this);
   }
 
-openModal() {
-  this.setState({modalOpen: true});
-}
-
-closeModal() {
-  this.setState({modalOpen: false});
-}
 
 
-checkAnswer(event) {
-  this.setState({completed: true});
-  this.props.checkCompleted();
-  if(this.props.question.correct_answer === event.target.id) {
-    this.props.question.difficulty = "RIGHT";
-  } else {
-      this.props.question.difficulty = "WRONG";
+  checkAnswer(event) {
+
+    this.setState({completed: true});
+    if(this.props.question.correct_answer === event.target.id) {
+      this.props.incrementScore(this.props.score, this.props.question.difficulty, this.props.roomId);
+
+      alert('Correct');
+    } else {
+      this.props.decrementScore(this.props.score, this.props.question.difficulty, this.props.roomId);
+      alert('Wrong');
     }
-    this.closeModal();
+
+
+    this.props.question.difficulty = '';
+    this.props.checkCompleted();
   }
+
   renderAnswer(array) {
     const shuffle = _.shuffle(array);
     return shuffle.map((answer) => {
@@ -49,13 +49,13 @@ checkAnswer(event) {
     const props = this.props.question;
     if(!props){
       return (
-        <div></div>
+        <div />
       );
     }
-    const question = _.unescape(props.question);
-    const answerArray = [_.unescape(props.correct_answer)]
+    const question = unescapeHelper(props.question);
+    const answerArray = [unescapeHelper(props.correct_answer)]
     for(let i = 0; i < props.incorrect_answers.length; i++){
-      answerArray.push(_.unescape(props.incorrect_answers[i]))
+      answerArray.push(unescapeHelper(props.incorrect_answers[i]))
     }
 
     return (
@@ -63,12 +63,14 @@ checkAnswer(event) {
         <h3>Question:</h3>
         <h3>{question}</h3>
           {this.renderAnswer(answerArray)}
-        <ReactCountDownClock seconds={10}
-                     color="blue"
-                     alpha={1.5}
-                     showMilliseconds={false}
-                     size={75}
-                     onComplete={this.closeModal.bind(this)} />
+          <ReactCountDownClock
+            seconds={15}
+            color="blue"
+            alpha={1.5}
+            showMilliseconds={false}
+            size={75}
+            onComplete={this.props.checkCompleted.bind(this)}
+          />
       </div>
     );
   }
@@ -76,9 +78,14 @@ checkAnswer(event) {
 
 function mapStateToProps(state) {
   return {
-    question: state.activeQuestion
+    question: state.activeQuestion,
+    score: state.ScoreReducer,
   };
 }
 
 
-export default connect(mapStateToProps)(QuestionDetail)
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ changeScore, decrementScore, incrementScore }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(QuestionDetail)

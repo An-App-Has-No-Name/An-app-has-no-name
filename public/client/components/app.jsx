@@ -1,14 +1,55 @@
 import React, { Component }  from 'react';
-import NavBar from './navigation_bar';
 import QuestionList from '../containers/question-list';
-import QuestionDetail from '../containers/question-detail';
-import CategoryList from '../containers/category-list';
+import Score from '../containers/score';
+import MultiplayerScore from '../containers/multiplayer-score';
 
 export default class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {messages: []};
+  }
+
+
+
+
+  addUser() {
+    const user = {
+      username: socket.id
+    }
+  }
+
+  handleSubmit(e) {
+    const body = e.target.value;
+
+    if (e.keyCode === 13 && body) {
+      const message = {
+        body,
+        room: this.state.room
+      }
+      this.setState({messages: [message, ...this.state.messages]});
+
+
+      this.socket.emit('message': body);
+      console.log('body',this.socket)
+      e.target.value = '';
+    }
+  }
+
   render(){
+
+    const messages = this.state.messages.map((message, index) => {
+     return <div key={index}><b>{message.from}:</b>{message.body} </div>
+    });
+
     return (
       <div className="wrap">
-        <CategoryList />
+        <QuestionList/>
+        <Score />
+        <MultiplayerScore />
+        <div> {this.state.room} </div>
+        <div> {messages} </div>
+        <input type="text" onKeyUp={this.handleSubmit.bind(this)}></input>
       </div>
     );
   }
