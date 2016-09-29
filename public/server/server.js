@@ -83,7 +83,7 @@ app.post('/users/signin/', (req, res) => { //
         } else {
           console.log('Invalid password!', err);
           res.status(200).json('Invalid password.')
-        } 
+        }
       })
     })
   })
@@ -143,6 +143,7 @@ io.on('connection', function (socket) {
   gameSocket.on('openModal', openModal);
   gameSocket.on('closeModal', closeModal);
   gameSocket.on('changingScore', function(data) {
+
     socket.broadcast.to(data.roomId).emit('broadcastScore', data);
   });
   gameSocket.on('disconnect', function(){
@@ -221,7 +222,7 @@ const closeModal = function(data) {
 
 const trackingGame = function(data) {
   if (data.chosenQuestion === 2) {
-    io.sockets.in(data.roomId).emit('gameOver', 'Game Over');
+    io.sockets.in(data.roomId).emit('gameOver', {gameOver: true});
   } else {
     console.log('game is going', data.chosenQuestion);
   }

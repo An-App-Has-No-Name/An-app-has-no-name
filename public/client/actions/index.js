@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 import { browserHistory } from 'react-router';
-import { CHANGE_SCORE, DECREMENT_SCORE, FETCH_QUESTIONS, FETCH_QUESTIONS_RANDOM, INCREMENT_SCORE, QUESTION_SELECTED, LOGIN_USER_REQUEST, FETCH_MULTI_QUESTIONS, SIGNUP_SUCCESS, UNAUTH_USER } from '../constants/index';
+import { CHANGE_SCORE, DECREMENT_SCORE, FETCH_QUESTIONS, FETCH_QUESTIONS_RANDOM, INCREMENT_SCORE, QUESTION_SELECTED, LOGIN_USER_REQUEST, FETCH_MULTI_QUESTIONS, SIGNUP_SUCCESS, UNAUTH_USER, RESET_QUESTION } from '../constants/index';
 
 export function checkLogin(props) {
   const url = `/users/signin`;
@@ -17,7 +17,7 @@ export function checkLogin(props) {
     .catch(function (error) {
     console.log(error);
   });
-  return serverResponse;  
+  return serverResponse;
 }
 
 export function signupUser(props) {
@@ -33,7 +33,7 @@ export function signupUser(props) {
     .catch(function (error) {
     console.log(error);
   });
-  return serverResponse;  
+  return serverResponse;
 }
 
 
@@ -59,7 +59,7 @@ export function signoutUser() {
 //     .catch(function (error) {
 //     console.log(error);
 //   });
-//   return serverResponse;  
+//   return serverResponse;
 // }
 
 export function selectQuestion(question) {
@@ -121,5 +121,12 @@ export const decrementScore = (score, difficulty, roomId) => {
     roomId: roomId,
     score: score,
     difficulty: difficulty,
+  };
+};
+
+export const resetQuestion = () => {
+  return {
+    type: RESET_QUESTION,
+    payload: null
   };
 };

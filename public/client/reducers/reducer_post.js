@@ -1,6 +1,6 @@
 'use strict';
 
-import { FETCH_QUESTIONS, FETCH_QUESTIONS_RANDOM, FETCH_MULTI_QUESTIONS } from '../constants/index';
+import { FETCH_QUESTIONS, FETCH_QUESTIONS_RANDOM, FETCH_MULTI_QUESTIONS, RESET_QUESTION } from '../constants/index';
 
 export default function(state = null, action) {
   switch(action.type) {
@@ -20,6 +20,9 @@ export default function(state = null, action) {
       } else {
         console.log('need data')
       }
+
+    case RESET_QUESTION:
+      return null;
   }
     return state;
 }
