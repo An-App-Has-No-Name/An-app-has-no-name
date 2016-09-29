@@ -1,8 +1,10 @@
 const Sequelize = require('sequelize');
+// const bcrypt = require('bcrypt-nodejs');
+const { PSQL_DB } = require('./../../config');
 
-const sequelize = new Sequelize('database', 'username', 'password', {
-  host: 'localhost',
-  dialect: 'postgres'
+const PSQLDB = process.env.DATABASE_URL || PSQL_DB ;
+const sequelize = new Sequelize(PSQLDB, {
+  native: true,
 });
 
 sequelize

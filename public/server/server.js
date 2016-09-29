@@ -1,11 +1,11 @@
 'use strict';
-
+const jwt  = require('jwt-simple');
 //proxy between express and webpack-dev-server
 const express = require('express');
 const httpProxy = require('http-proxy');
 
 require('./models/mongo.config');
-// const db = require('./models/users/index');
+const db = require('./models/users/index');
 
 require('./models/questionRoutes');
 
@@ -52,33 +52,74 @@ proxy.on('error', function(err) {
 
 require('./middleware')(app, express);
 
-app.get('/users/:username/', (req, res) => { //
-  // db.User.sync().then((User) => {
-  //   User.findOrCreate({where: {username: req.params.username}})
-  //   .spread(function(user, created) {
-  //     // console.log(user.get({
-  //     //   plain: true
-  //     // }))
-  //     if (created) {
-  //       console.log('You are logged in!');
-  //       res.status(200).json({data: 'You are logged in!'});
-  //     } else {
-  //       console.log('Sorry but that username is already taken!');
-  //       res.status(200).json({data: 'Sorry but that username is already taken!'})
-  //     }
-  //   })
-  // })
-
-    // if (!token) {
-    //     res.sendStatus(401);
-    // } else {
-    //     res.status(200)
-    //         .json({data: 'You are logged in!'});
-    // } catch (e) {
-    //     res.sendStatus(401);
-
-    // }
+app.post('/users/signup/', (req, res) => { //
+  db.User.sync().then((User) => {
+    const user = {username: req.body.username}
+    User.findOrCreate({where: {username: req.body.username}, defaults: {password: req.body.password}})
+    .spread(function(user, created) {
+      if (created) {
+        const token = jwt.encode(user, 'secret');
+        user.update({token, token}).then(() => {
+          res.status(200).json({token, data: "You have been signed up!"});
+        })
+      } else {
+        res.status(200).json('Username already exists.')
+      }
+    })
+  })
 });
+
+
+app.post('/users/signin/', (req, res) => { //
+  db.User.sync().then((User) => {
+    User.findOne({where: {username: req.body.username}})
+    .then((user) => {
+      user.authenticate(req.body.password, (err, match) => {
+        if (match) {
+          const token = jwt.encode(user, 'secret');
+          user.update({token, token}).then(() => {
+            res.status(200).json({token, data:"You have been logged in!"});
+          })
+        } else {
+          console.log('Invalid password!', err);
+          res.status(200).json('Invalid password.')
+        } 
+      })
+    })
+  })
+});
+
+// app.post('/users/signout/', (req, res) => { //
+//   db.User.sync().then((User) => {
+//     User.findOne({where: {token: req.body.token}})
+//     .then((user) => {
+//       const token = '';
+//       user.update({token, token}).then(() => {
+//         res.status(200).json({token, data:"You have been successfully logged out!"});
+//       })
+//     })
+//   })
+// });
+  // checkAuth: function (req, res, next) {
+  //   var token = req.headers['x-access-token'];
+  //   if (!token) {
+  //     next(new Error('No token'));
+  //   } else {
+  //     var user = jwt.decode(token, 'secret');
+  //     var findUser = Q.nbind(User.findOne, User);
+  //     findUser({username: user.username})
+  //       .then(function (foundUser) {
+  //         if (foundUser) {
+  //           res.status(200).send();
+  //         } else {
+  //           res.status(401).send();
+  //         }
+  //       })
+  //       .fail(function (error) {
+  //         next(error);
+  //       });
+  //   }
+  // }
 
 const server = app.listen(port, function(){
   console.log(`Server is running on ${port}`);

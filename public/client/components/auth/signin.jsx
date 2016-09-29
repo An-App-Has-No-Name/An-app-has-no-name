@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { browserHistory } from 'react-router';
 import { SubmissionError } from 'redux-form';
-import { checkLogin } from '../actions/index';
+import * as actions from '../../actions/index';
 
 const renderField = ({ input, label, type, meta: { touched, error } }) => (
   <div>
@@ -16,17 +16,16 @@ const renderField = ({ input, label, type, meta: { touched, error } }) => (
   </div>
 )
 
-class Login extends Component {
+class Signin extends Component {
   constructor (props) {
     super(props);
-    this.checkLogin = this.props.checkLogin.bind(this);
-    this.submitAndCheck = this.submitAndCheck.bind(this);
+    // this.props.checkLogin = this.props.props.checkLogin.bind(this);
+    this.handleFormSubmit = this.handleFormSubmit.bind(this);
   }
 
-  submitAndCheck(values) {
-    this.checkLogin(values);
-    console.log(values);
-    // browserHistory.push('/play');
+  handleFormSubmit(values) {
+    this.props.checkLogin(values);
+    browserHistory.push('/');
   }
   renderLoginStatus() {
     if(!this.props.loginStatus){
@@ -35,16 +34,16 @@ class Login extends Component {
       )
     }
     return (
-      <div> {this.props.loginStatus.data}</div>
+      <div>{this.props.loginStatus.data}</div>
     )
   }
 
   render() {
     const { handleSubmit, pristine, reset, submitting } = this.props;
     return (
-      <form onSubmit={handleSubmit(this.submitAndCheck)}>
+      <form onSubmit={handleSubmit(this.handleFormSubmit)}>
         <Field name="username" type="text" component={renderField} label="Username"/>
-        {/* <Field name="password" type="password" component={renderField} label="Password"/> */}
+        <Field name="password" type="password" component={renderField} label="Password"/>
         {/* {error && <strong>{error}</strong>} */}
         <div>
           <button type="submit" disabled={submitting}>Log In</button>
@@ -56,18 +55,28 @@ class Login extends Component {
   }
 }
 
+const validate = props => {
+  const errors = {};
+  const fields = ['username', 'password'];
+
+  fields.forEach((f) => {
+    if(!(f in props)) {
+      errors[f] = `${f} is required`;
+    }
+  });
+
+  return errors;
+}
+
 function mapStateToProps(state){
   return {
-    loginStatus: state.LoginReducer,
+    loginStatus: state.SigninReducer,
   };
 }
 
-const LoginForm = reduxForm({
-  form: 'loginForm',
-})(Login);
+const SigninForm = reduxForm({
+  validate,
+  form: 'signin',
+})(Signin);
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ checkLogin }, dispatch)
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);
+export default connect(mapStateToProps, actions)(SigninForm);
