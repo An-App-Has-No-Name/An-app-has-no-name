@@ -4,8 +4,10 @@ import { bindActionCreators } from 'redux';
 import Modal from 'react-modal';
 import { browserHistory } from 'react-router';
 import QuestionDetail from './question-detail';
-import { selectQuestion } from '../actions/index';
+import { selectQuestion, changeScore, resetQuestion } from '../actions/index';
 import Socket from '../socket';
+import * as audio from '../audio';
+
 
 const customStyles = {
   content : {
@@ -25,11 +27,17 @@ class QuestionList extends Component {
     this.state = {
       modalOpen: false,
       chosenQuestion: [],
-      singleP: []
+      singleP: [],
+      gameOver: false,
+      playerTwoScore: 0
     };
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.gameOver = this.gameOver.bind(this);
+    this.closeEndingModal = this.closeEndingModal.bind(this);
+    this.changeScore = this.props.changeScore.bind(this);
+    this.resetQuestion = this.props.resetQuestion.bind(this);
+    this.reset = this.reset.bind(this);
   }
 
 
@@ -61,7 +69,13 @@ componentDidMount() {
       modalOpen: data.modalOpen
     });
   });
-  Socket.on('gameOver', this.gameOver)
+  Socket.on('gameOver', this.gameOver);
+
+  Socket.on('broadcastScore', (data) => {
+
+    console.log("in question listen to score", data)
+    this.setState({playerTwoScore: data.score});
+  });
 }
 
 openModal(question) {
@@ -91,13 +105,23 @@ openModal(question) {
 
 
 gameOver(data) {
+
   if(this.state.roomId){
+    if(data.gameOver){
+      audio.play('gameOver');
+      this.setState({
+        gameOver: true
+      });
+      // browserHistory.push('/endgame');
+    }
+  } else {
+    this.reset();
     browserHistory.push('/endgame');
   }
-  browserHistory.push('/endgame');
-  // alert(data);
-  //setTimeout(alert(data), 3000);
-  //need to route or do anything
+}
+reset(){
+  this.changeScore(0);
+  this.resetQuestion()
 }
 
 closeModal() {
@@ -109,6 +133,7 @@ closeModal() {
   };
 
   if (this.state.roomId) {
+
     Socket.emit('closeModal', data);
   } else {
     let counter = 0;
@@ -123,6 +148,14 @@ closeModal() {
   }
 
   Socket.emit('trackingGame', data);
+}
+
+closeEndingModal(){
+  this.reset();
+  browserHistory.push('/');
+  this.setState({
+    gameOver: false,
+  });
 }
 
 renderQuestion(questions) {
@@ -194,12 +227,28 @@ render (){
 
       </Modal>
   );
+  let endingModal = (
+    <Modal
+      isOpen={this.state.gameOver}
+      onRequestClose={() => {
+          this.closeModal();
+        }
+      }
+      style={customStyles}
+    >
+    <h1>Your score: {this.props.playerOneScore}</h1>
+    <h1>Player 2: {this.state.playerTwoScore}</h1>
+    {this.state.playerTwoScore > this.props.playerOneScore ? <h3>Player 2 wins!</h3> : <h3>You Win!</h3>}
+    <button onClick={this.closeEndingModal}>Go to home page</button>
+    </Modal>
+  );
     return (
       <div className="List-group" key={this.props.questions}>
         <table className="table">
           <td>{this.renderList()}</td>
         </table>
         {waitingModal}
+        {endingModal}
         <Modal
           isOpen={this.state.modalOpen}
           onRequestClose={() => this.closeModal()}
@@ -215,11 +264,10 @@ render (){
 function mapStateToProps(state){
   return {
     questions: state.QuestionReducer,
+    playerOneScore: state.ScoreReducer
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ selectQuestion: selectQuestion }, dispatch)
-}
 
-export default connect(mapStateToProps, mapDispatchToProps)(QuestionList);
+
+export default connect(mapStateToProps, {selectQuestion, changeScore, resetQuestion})(QuestionList);
