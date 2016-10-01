@@ -10,7 +10,7 @@ import ReactCountDownClock from 'react-countdown-clock';
 import ResultDetail from './result-detail';
 import * as audio from '../audio';
 import {customStyles} from '../helpers/lodashHelper.js';
-
+import path from 'path';
 class QuestionList extends Component {
 
   constructor (props) {
@@ -125,15 +125,16 @@ gameOver(data) {
 
     //Multiplayer
     if(data.gameOver){
-      audio.play('gameOver');
       this.setState({
         gameOver: true
       });
-      // browserHistory.push('/endgame');
+      audio.play('gameOver');
+      browserHistory.push('/endgame');
     }
   } else {
-
-    //
+    this.setState({
+      gameOver: true
+    });
     this.reset();
     browserHistory.push('/endgame');
 
@@ -174,7 +175,7 @@ closeModal() {
       singleP: [counter++, ...this.state.singleP]
     });
     console.log('singleP', this.state.singleP);
-    if(this.state.singleP.length === 2){
+    if(this.state.singleP.length === 3){
       this.setState({
         gameOver: true
       });
