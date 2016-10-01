@@ -1,14 +1,8 @@
 'use strict';
-const jwt  = require('jwt-simple');
 //proxy between express and webpack-dev-server
 const express = require('express');
 const httpProxy = require('http-proxy');
 const path = require('path');
-require('./models/mongo.config');
-const db = require('./models/psql.config');
-
-require('./models/questionRoutes');
-
 
 let gameSocket;
 
@@ -25,7 +19,7 @@ let port = isProduction ? process.env.PORT : 9999;
 // When not in production ==> run workflow
 
 if (!isProduction) {
-  const bundle = require('./bundle.js');
+  const bundle = require('./config/bundle.js');
 
   bundle();
 
@@ -50,7 +44,7 @@ proxy.on('error', function(err) {
   console.log('Could not connect to proxy, please try again...');
 });
 
-require('./middleware')(app, express);
+require('./config/middleware')(app, express);
 
 app.post('/users/signup/', (req, res) => { //
   db.User.sync().then((User) => {
@@ -69,61 +63,6 @@ app.post('/users/signup/', (req, res) => { //
   })
 });
 
-
-app.post('/users/signin/', (req, res) => { //
-  db.User.sync().then((User) => {
-    User.findOne({where: {username: req.body.username}})
-    .then((user) => {
-      user.authenticate(req.body.password, (err, match) => {
-        if (match) {
-          const copyUser = JSON.parse(JSON.stringify(user));
-          copyUser.token = '';
-          //encode on copy of user with token set to empty. Otherwise the token will keep encoding on the previous token and it gets huge. Might be better to do another update on the user instead. 
-          const token = jwt.encode(copyUser, 'secret');
-          user.update({token, token}).then(() => {
-            res.status(200).json({token, data:"You have been logged in!"});
-          })
-        } else {
-          console.log('Invalid password!', err);
-          res.status(200).json('Invalid password.')
-        }
-      })
-    })
-  })
-});
-
-// app.post('/users/signout/', (req, res) => { //
-//   db.User.sync().then((User) => {
-//     User.findOne({where: {token: req.body.token}})
-//     .then((user) => {
-//       const token = '';
-//       user.update({token, token}).then(() => {
-//         res.status(200).json({token, data:"You have been successfully logged out!"});
-//       })
-//     })
-//   })
-// });
-  // checkAuth: function (req, res, next) {
-  //   var token = req.headers['x-access-token'];
-  //   if (!token) {
-  //     next(new Error('No token'));
-  //   } else {
-  //     var user = jwt.decode(token, 'secret');
-  //     var findUser = Q.nbind(User.findOne, User);
-  //     findUser({username: user.username})
-  //       .then(function (foundUser) {
-  //         if (foundUser) {
-  //           res.status(200).send();
-  //         } else {
-  //           res.status(401).send();
-  //         }
-  //       })
-  //       .fail(function (error) {
-  //         next(error);
-  //       });
-  //   }
-  // }
-
 app.get('*', function (request, response){
   response.sendFile(path.resolve(__dirname, '../', 'index.html'))
 })  
@@ -131,12 +70,6 @@ app.get('*', function (request, response){
 const server = app.listen(port, function(){
   console.log(`Server is running on ${port}`);
 });
-
-// const server = db.sequelize.sync().then(function() {
-//   app.listen(port, function(){
-//     console.log(`Server is running on ${port}`);
-//   });
-// });
 
 const io = require('socket.io')(server);
 

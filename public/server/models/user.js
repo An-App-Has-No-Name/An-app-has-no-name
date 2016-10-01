@@ -1,22 +1,5 @@
 const bcrypt   = require('bcrypt-nodejs');
-// module.exports = function(sequelize, DataTypes) {
-//   return sequelize.define("user", {
-//     id: {
-//       type: Sequelize.INTEGER,
-//       primaryKey: true,
-//       autoIncrement: true
-//     },
-//     createdAt: {
-//       type: Sequelize.DATE
-//     },
-//     updatedAt: {
-//       type: Sequelize.DATE
-//     },
-//     username: Sequelize.STRING,
-//   });
-// }
 const hashPassword = function (user, options, callback) {
-
   bcrypt.genSalt(10, (err, salt) => {
     if (err) { return callback(err); }
 
@@ -40,11 +23,13 @@ const authenticate = function(passwordToCheck, callback) {
 
 const beforeCreate = function(user, options, callback) {
   user.username = user.username.toLowerCase();
-  if (user.password)
+  if (user.password) {
     hashPassword(user, options, callback);
-  else
+  } else {
     return callback(null, options);
+  }
 }
+
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define("user", {
     username: DataTypes.STRING,
@@ -59,7 +44,7 @@ module.exports = function(sequelize, DataTypes) {
     instanceMethods: {
       authenticate
     }
-  })
+  });
 }
 
 

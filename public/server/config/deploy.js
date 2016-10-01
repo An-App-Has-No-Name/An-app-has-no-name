@@ -3,7 +3,7 @@
 if (process.env.NODE_ENV === 'production') {
   const path = require('path');
 
-  const deployConfig = path.resolve(__dirname, '../../webpack.production.config.js');
+  const deployConfig = path.resolve(__dirname, '.../../../webpack.production.config.js');
   console.log("config", deployConfig);
   // We basically just create a child process that will run
   // the production bundle command

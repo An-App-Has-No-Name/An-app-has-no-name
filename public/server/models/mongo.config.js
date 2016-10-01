@@ -2,9 +2,9 @@
 
 const MongoClient = require('mongodb');
 const assert = require('assert');
-const utils = require('./utils');
+const utils = require('../config/utils');
 
-const MONGODB  = process.env.MONGODB_URI || require('./../config').MONGODB;
+const MONGODB  = process.env.MONGODB_URI || require('../config/config').MONGODB;
 
 const mongodb = MONGODB;
 
