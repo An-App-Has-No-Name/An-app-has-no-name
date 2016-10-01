@@ -10,8 +10,7 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      messages: [],
-      unsaved: false,
+      roomId: null
     };
   }
 
@@ -20,61 +19,26 @@ export default class App extends Component {
       console.log("roomID in QuestionList", data.roomId);
       this.setState({roomId: data.roomId});
     });
-
-  }
-
-  addUser() {
-    const user = {
-      username: socket.id
-    }
-  }
-
-  handleSubmit(e) {
-    const body = e.target.value;
-
-    if (e.keyCode === 13 && body) {
-      const message = {
-        body,
-        room: this.state.room
-      }
-      this.setState({messages: [message, ...this.state.messages]});
-      Socket.emit('message': body);
-      e.target.value = '';
-    }
   }
 
   renderScore() {
     if (this.state.roomId) {
-      console.log('Multiplayer', this.state.roomId)
       return (
-        <div >
+        <div>
           <Score />
           <MultiplayerScore />
         </div>
       );
     } else {
-      console.log('Single Player')
-
       return (<Score />);
     }
-
   }
 
   render(){
-
-
-    const messages = this.state.messages.map((message, index) => {
-     return <div key={index}><b>{message.from}:</b>{message.body} </div>
-    });
-
     return (
       <div className="wrap">
-        {/* <QuestionList/> */}
         {this.props.children}
         {this.renderScore()}
-        <div> {this.state.room} </div>
-        <div> {messages} </div>
-        <input type="text" onKeyUp={this.handleSubmit.bind(this)}></input>
       </div>
     );
   }

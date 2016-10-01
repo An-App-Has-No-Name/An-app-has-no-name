@@ -13,6 +13,7 @@ import {browserHistory} from 'react-router';
 import { Link } from 'react-router';
 import _ from 'lodash';
 import {customStyles} from '../helpers/lodashHelper.js';
+import Chatbox from './chatbox';
 
 class Main extends Component {
 
@@ -186,7 +187,7 @@ class Main extends Component {
 
       joinButton : (
         <Link to={this.state.roomValid ? "/multiplayer" : "/"} onClick={this.joinRoom}>
-          <button >Join room</button>
+          <button>Join room</button>
         </Link>
       )
     }
@@ -196,12 +197,10 @@ class Main extends Component {
         <Header />
         <SelectCategories />
         <RandomCategories />
-
         <form >
           {this.state.roomCreated ? null : html.generateButton}
           {this.state.roomCreated ? html.roomCreated : null}
         </form>
-
         <input
           type="text"
           placeholder="Enter a room"
@@ -226,7 +225,7 @@ class Main extends Component {
           {this.state.roomCreated ? html.startGameButton : null}
           </Modal>
         </div>
-
+        <Chatbox />
       </div>
     );
   }

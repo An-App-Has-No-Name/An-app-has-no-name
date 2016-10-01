@@ -76,3 +76,22 @@ button {
   border: 1px solid white;
   margin: 20px;
 }
+
+.message-container {
+  overflow: auto;
+  height: 400px;
+  width: 80%;
+  margin-left: 10%;
+  border-style: solid;
+}
+
+ul {
+  list-style: none;
+  text-align: left;
+  font-size: 30px;
+  width: 95%;
+}
+
+.chats li:nth-child(even) {
+  background: grey;
+}
