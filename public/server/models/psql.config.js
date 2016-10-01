@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 // const bcrypt = require('bcrypt-nodejs');
 
-const PSQLDB = process.env.DATABASE_URL || require('./../../config').PSQL_DB;
+const PSQLDB = process.env.DATABASE_URL || require('./../config').PSQL_DB;
 const sequelize = new Sequelize(PSQLDB, {
   native: true,
 });
@@ -19,7 +19,7 @@ sequelize
 const db = {
   Sequelize: Sequelize,
   sequelize: sequelize,
-  User:  sequelize.import(__dirname + '/user'),
+  User:  sequelize.import(__dirname + '/users/user'),
 };
 
 module.exports = db;
