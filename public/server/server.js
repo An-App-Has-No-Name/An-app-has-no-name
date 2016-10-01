@@ -76,7 +76,10 @@ app.post('/users/signin/', (req, res) => { //
     .then((user) => {
       user.authenticate(req.body.password, (err, match) => {
         if (match) {
-          const token = jwt.encode(user, 'secret');
+          const copyUser = JSON.parse(JSON.stringify(user));
+          copyUser.token = '';
+          //encode on copy of user with token set to empty. Otherwise the token will keep encoding on the previous token and it gets huge. Might be better to do another update on the user instead. 
+          const token = jwt.encode(copyUser, 'secret');
           user.update({token, token}).then(() => {
             res.status(200).json({token, data:"You have been logged in!"});
           })
