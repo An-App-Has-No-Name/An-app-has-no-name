@@ -1,17 +1,20 @@
 'user strict';
 
 import { combineReducers } from 'redux';
-import questions from './reducer_question';
+import { reducer as form } from 'redux-form';
 import activeQuestion from './reducer_active_question';
+import AuthReducer from './reducer_auth';
 import QuestionReducer from './reducer_post';
-import CategoriesListReducer from './reducer_categoriesList';
-// import { reducer as formReducer } from 'redux-form';
+import ScoreReducer from './reducer_score';
+import SigninReducer from './reducer_signin';
 
 const rootReducer = combineReducers({
-  questions,
+  form,
+  AuthReducer,
   activeQuestion,
-  post: QuestionReducer,
-  categories: CategoriesListReducer
+  QuestionReducer,
+  ScoreReducer,
+  SigninReducer
 });
 
 export default rootReducer;

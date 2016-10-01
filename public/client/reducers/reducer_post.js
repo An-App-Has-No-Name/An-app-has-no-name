@@ -1,12 +1,28 @@
-// import { FETCH_QUESTION } from '../actions/index';
-//
-// const INITIAL_STATE = { all: [], post: null };
-//
-// export default function(state = INITIAL_STATE, action) {
-//   switch(action.type) {
-//     case FETCH_QUESTION:
-//       return { ...state, all: action.payload.data };
-//     default:
-//       return state;
-//   }
-// }
+'use strict';
+
+import { FETCH_QUESTIONS, FETCH_QUESTIONS_RANDOM, FETCH_MULTI_QUESTIONS, RESET_QUESTION } from '../constants/index';
+
+export default function(state = null, action) {
+  switch(action.type) {
+    case FETCH_QUESTIONS:
+      if(action.payload.data){
+        return action.payload.data;
+      }
+
+    case FETCH_QUESTIONS_RANDOM:
+      if(action.payload.data){
+          return action.payload.data;
+      }
+
+    case FETCH_MULTI_QUESTIONS:
+      if (action.payload) {
+        return action.payload;
+      } else {
+        console.log('need data')
+      }
+
+    case RESET_QUESTION:
+      return null;
+  }
+    return state;
+}
