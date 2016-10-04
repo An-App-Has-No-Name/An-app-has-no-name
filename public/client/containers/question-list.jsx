@@ -11,6 +11,7 @@ import ResultDetail from './result-detail';
 import * as audio from '../audio';
 import {customStyles} from '../helpers/lodashHelper.js';
 import path from 'path';
+import { Button } from 'react-materialize';
 
 const ReactToastr = require("react-toastr");
 const {ToastContainer} = ReactToastr;
@@ -349,7 +350,6 @@ renderAllModals() {
           <div className="indeterminate"></div>
         </div>
       </div>
-
     ),
     waitingHost: (
       <div className="waitingHost">
@@ -357,7 +357,7 @@ renderAllModals() {
         <div className="progress">
           <div className="indeterminate"></div>
         </div>
-        <button onClick={this.closeModal}>Exit</button>
+        <Button onClick={this.closeModal}>Exit</Button>
       </div>
     ),
 
@@ -376,7 +376,7 @@ renderAllModals() {
             {showWinner}</div> : null
           }
 
-          <button onClick={callback}>Go to home page</button>
+          <Button onClick={callback}>Go to home page</Button>
         </div>
         )
       }.bind(this),
@@ -385,7 +385,6 @@ renderAllModals() {
       return (
         <div>
           <QuestionDetail  closeModal={this.closeModal} roomId={this.state.roomId} getScore={this.getScore}/>
-          <button onClick={callback}>Close</button>
         </div>
       )
     }.bind(this),
@@ -395,14 +394,16 @@ renderAllModals() {
         <div>
           <ResultDetail  roomId={this.state.roomId} Player1={this.state.p1ScoreResultModal} Player2={this.state.p2ScoreResultModal} Correct={this.state.answerResultModal} />
           <ReactCountDownClock
-            seconds={5}
+            seconds={3}
             color="#26a69a"
             alpha={1.5}
             showMilliseconds={false}
             size={75}
             onComplete={callback}
           />
-        <button onClick={callback}>Close</button>
+          <div className="close-result-button" >
+            <Button  onClick={callback}>Close</Button>
+          </div>
         </div>
       )
     }.bind(this)
