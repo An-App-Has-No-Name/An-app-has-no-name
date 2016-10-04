@@ -4,7 +4,7 @@
 
 const Webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
-const webpackConfig = require('../../webpack.config.js');
+const webpackConfig = require('../../../webpack.config.js');
 const path = require('path');
 const fs = require('fs');
 const mainPath = path.resolve(__dirname, '..', 'client', 'index.js');

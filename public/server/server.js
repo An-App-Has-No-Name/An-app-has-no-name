@@ -1,18 +1,26 @@
 'use strict';
-
 //proxy between express and webpack-dev-server
 const express = require('express');
 const httpProxy = require('http-proxy');
-
-require('./models/mongo.config');
-const db = require('./models/users/index');
-
-require('./models/questionRoutes');
-
-
+const path = require('path');
+const db = require('./models/psql.config')
 let gameSocket;
 
 const app = express();
+
+
+// db.Score.sync().then((Score)=>{
+//   Score.create({score: 100, userId: 2, username: 'snape'})
+// })
+// db.Score.sync().then((Score)=>{
+//   Score.findAll({order:'score DESC'}).then((scores)=>{
+//     scores.forEach((score)=>{
+//       console.log('--------');
+//       console.log(score.dataValues.id, score.dataValues.score);
+//     })
+//     console.log("HERER DA STUFFZ");
+//   })
+// })
 
 const proxy = httpProxy.createProxyServer({
   changeOrigin: true
@@ -25,7 +33,7 @@ let port = isProduction ? process.env.PORT : 9999;
 // When not in production ==> run workflow
 
 if (!isProduction) {
-  const bundle = require('./bundle.js');
+  const bundle = require('./config/bundle.js');
 
   bundle();
 
@@ -50,108 +58,89 @@ proxy.on('error', function(err) {
   console.log('Could not connect to proxy, please try again...');
 });
 
-require('./middleware')(app, express);
+require('./config/middleware')(app, express);
 
-app.get('/users/:username/', (req, res) => { //
-  db.User.sync().then((User) => {
-    User.findOrCreate({where: {username: req.params.username}})
-    .spread(function(user, created) {
-      // console.log(user.get({
-      //   plain: true
-      // }))
-      if (created) {
-        console.log('You are logged in!');
-        res.status(200).json({data: 'You are logged in!'});
-      } else {
-        console.log('Sorry but that username is already taken!');
-        res.status(200).json({data: 'Sorry but that username is already taken!'})
-      }
-    })
-  })
-
-    // if (!token) {
-    //     res.sendStatus(401);
-    // } else {
-    //     res.status(200)
-    //         .json({data: 'You are logged in!'});
-    // } catch (e) {
-    //     res.sendStatus(401);
-
-    // }
-});
+app.get('*', function (request, response){
+  response.sendFile(path.resolve(__dirname, '../', 'index.html'))
+})
 
 const server = app.listen(port, function(){
   console.log(`Server is running on ${port}`);
 });
 
-// const server = db.sequelize.sync().then(function() {
-//   app.listen(port, function(){
-//     console.log(`Server is running on ${port}`);
-//   });
-// });
-
-
 const io = require('socket.io')(server);
 
 io.on('connection', function (socket) {
   // socket.emit('user connected');
+
   gameSocket = socket;
-
-
   gameSocket.on('JoinRoom', JoinRoom);
   gameSocket.on('CreateRoom', CreateRoom);
   gameSocket.on('fetchQuestions', fetchQuestions);
-  gameSocket.on('openModal', openModal);
-  gameSocket.on('closeModal', closeModal);
-  gameSocket.on('changingScore', function(data) {
-      console.log('changingScore', data.roomId);
-      socket.broadcast.emit('broadcastScore', data);
+  gameSocket.on('openModal', (data) => {
+    io.sockets.in(data.roomId).emit('receiveOpenOrder', data);
+    socket.broadcast.to(data.roomId).emit('turnChange', {yourTurn: true});
   });
-    console.log('client connected ', socket.id);
+  gameSocket.on('closeModal', closeModal);
+  gameSocket.on('closeResult', closeResult);
+  gameSocket.on('trackingGame', trackingGame);
+  gameSocket.on('checkRoom', checkRoom);
+  gameSocket.on('gameStart', gameStart);
+  gameSocket.on('message', getMessages);
+  gameSocket.on('changingScore', function(data) {
+
+    socket.broadcast.to(data.roomId).emit('broadcastScore', data);
+  });
+
+  gameSocket.on('leaveRoomInMiddle', leaveRoomInMiddle);
+
+  gameSocket.on('leaveRoomAndEndGame', function(roomId) {
+    gameSocket.leave(roomId);
+  });
+  gameSocket.on('disconnect', function(){
+    console.log("User disconnected");
+
+  });
+
+  console.log('client connected ', socket.id);
 });
 
-const CreateRoom = function(){
+const CreateRoom = function(host){
 
   let roomId = (Math.random() * 10000) | 0;
 
   console.log("this is room Create", typeof roomId);
   console.log("this is room CreateString", typeof roomId.toString());
 
-
+  //join to the room
   this.join(roomId.toString());
 
   //invoke 'newGameCreated' at Client side and send gameId & socketId
-  this.emit('newGameCreated', {roomId: roomId, mySocketId: this.id});
+  let data = {
+    room: roomId,
+    mySocketId: this.id,
+    roomList: roomId.toString()
+  };
+  this.emit('newGameCreated', data);
+  io.sockets.emit('newRoomCreated', data);
+  console.log('server create room', roomId, this.id);
 
-  //then join to the room
-
-  console.log('server create room', roomId, this.id)
 };
 
 
 const JoinRoom = function(data){
 
-
     let room = gameSocket.nsp.adapter.rooms[data.roomId];
-
     if (room !== undefined) {
-      console.log('roomId',data.roomId)
 
-      console.log('this is rooms ', room);
-      this.join(data.roomId);
-      // ***** Player already Joined
-
-
-      // Call playerJoined at Frontend and pass room Id
-      io.sockets.in(data.roomId).emit('playerJoined', data);
-    } else {
-      this.emit('errors', {message: "This room does not exist."});
+      if (room.length <= 1) {
+        this.join(data.roomId);
+        // ***** Player already Joined
+        // Call playerJoined at Frontend and pass room Id
+        io.sockets.in(data.roomId).emit('playerJoined', data);
+      }
     }
 };
-//
-// const leaveAndJoin = function(roomId) {
-//
-// };
 
 const fetchQuestions = function(data) {
 
@@ -159,7 +148,7 @@ const fetchQuestions = function(data) {
   //***** At this point we have the questions from the Client
 
   //broadcast data.questions and invoke the function receiveMultiplayerQuestions at Client side and send data.questions to Client.
-
+  console.log("Question from server", data)
   io.sockets.in(data.roomId).emit('receiveMultiplayerQuestions', data);
 };
 
@@ -167,13 +156,55 @@ const fetchQuestions = function(data) {
 const openModal = function(data) {
 
   //Invoke the receiveOpenOrder at Client and send back data.modalOpen
-    console.log('opening', data.roomId, data.modalOpen, data.question);
+    console.log('opening', data.roomId, data.question);
 
-  io.sockets.in(data.roomId).emit('receiveOpenOrder', data);
 };
 
 const closeModal = function(data) {
 
   //Invoke the receiveCloseOrder at Client and send back data.modalOpen
   io.sockets.in(data.roomId).emit('receiveCloseOrder', data);
+};
+const closeResult = function(data) {
+  console.log(data);
+  io.sockets.in(data.roomId).emit('closeResultOrder', data);
+};
+
+const trackingGame = function(data) {
+  if (data.chosenQuestion === 24) {
+    io.sockets.in(data.roomId).emit('gameOver', {gameOver: true});
+    gameSocket.leave(data.roomId);
+  } else {
+
+    console.log('game is going', data.chosenQuestion);
+  }
+};
+
+const checkRoom = function(roomId) {
+  let room = gameSocket.nsp.adapter.rooms[roomId];
+  if (!room) {
+    this.emit('validateRoom', {valid: false});
+  } else {
+    if (room.length > 1) {
+      this.emit('validateRoom', {valid: false});
+    } else {
+      this.emit('validateRoom', {valid: true});
+    }
+  }
+};
+
+const gameStart = function(data) {
+  this.emit('turnChange', {yourTurn: true});
+};
+
+const getMessages = function(data){
+  console.log(data);
+  io.sockets.emit('message', data);
+  this.emit('turnChange', {yourTurn: true})
+};
+
+const leaveRoomInMiddle = function(roomId) {
+  console.log('sadfhaoisdf', roomId);
+  gameSocket.leave(roomId);
+  io.sockets.in(roomId).emit('userleaving', {gameOver: true, roomId: roomId});
 };

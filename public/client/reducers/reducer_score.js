@@ -13,24 +13,28 @@ export default function(state = null, action) {
 
 
     case INCREMENT_SCORE:
+      let plus = '+' + action.difficulty;
       let incScore = action.score + action.difficulty;
       let dataInc = {
         score: incScore,
-        roomId: action.roomId
+        roomId: action.roomId,
+        amount: plus,
       };
-      console.log("dataInc", dataInc);
+      // console.log("dataInc", dataInc);
       Socket.emit('changingScore', dataInc);
 
       return dataInc.score;
 
 
     case DECREMENT_SCORE:
+      let minus = '-' + action.difficulty;
       let decScore = action.score - action.difficulty;
       let dataDec = {
         score: decScore,
-        roomId: action.roomId
+        roomId: action.roomId,
+        amount: minus
       };
-      console.log("dataDec", dataDec);
+      // console.log("dataDec", dataDec);
       Socket.emit('changingScore', dataDec);
 
       return dataDec.score;

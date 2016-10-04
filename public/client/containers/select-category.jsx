@@ -5,6 +5,7 @@ import { browserHistory } from 'react-router'
 import Multiselect from 'react-widgets/lib/Multiselect';
 import 'react-widgets/dist/css/react-widgets.css';
 import { fetchQuestions } from '../actions/index';
+import { Button, Card, Collapsible, CollapsibleItem, Modal} from 'react-materialize';
 
 const renderMultiselect = ({ input, ...rest }) =>
   <Multiselect {...input}
@@ -47,7 +48,7 @@ class SelectCategories extends Component {
 
   submit(values) {
     this.fetchQuestions(values.categories);
-    browserHistory.push('/play');
+    browserHistory.push('/play/questionlist');
   }
 
   render() {
@@ -56,17 +57,19 @@ class SelectCategories extends Component {
       <div>
         <form onSubmit={handleSubmit(this.submit)}>
           <div>
-            <label>Select Categories</label>
             <Field
+              className="tooltipped"
+              data-position="bottom" data-delay="50"
+              data-tooltip="Click me to choose categories"
               name="categories"
+              value="Select 5 categories"
               component={renderMultiselect}
-              data={categoriesList}
-            />
+              data={categoriesList} />
           </div>
-          <div>
-            <button type="submit" disabled={pristine || submitting}>Play</button>
-            <button type="button" disabled={pristine || submitting} onClick={reset}>Reset Values
-            </button>
+          <div className="select-category-button-group">
+            <Button className="select-category-button" type="submit" disabled={pristine || submitting}>Play</Button>
+            <Button className="select-category-button" type="Button" disabled={pristine || submitting} onClick={reset}>Reset Values
+            </Button>
           </div>
         </form>
       </div>

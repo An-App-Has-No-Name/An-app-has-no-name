@@ -3,7 +3,7 @@
 const fs = require('fs'),
       request = require('request'),
       path = require('path'),
-      {OPEN_TRIVIA_SESSION_TOKEN} = require('./../config');
+      {OPEN_TRIVIA_SESSION_TOKEN} = ('../config/config');
 //Commenting the following out because 'html2json' module will run an error and it's not something we need again. So it hasn't been put in pacakge.json.
 
 // const html2json = require('html2json').html2json;

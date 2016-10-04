@@ -5,7 +5,6 @@ import Socket from "../socket";
 
 class Score extends Component {
 
-
   componentWillMount() {
     if (!this.props.score) {
       this.props.changeScore(0);
@@ -22,14 +21,13 @@ class Score extends Component {
       return (
         <div>
           <div className="panel panel-default">
-            <div className="panel-heading">Your Score</div>
+            <div className="panel-heading">Your score</div>
             <div className="panel-body">
               {this.props.score}
             </div>
           </div>
         </div>
       );
-
   }
 }
 
