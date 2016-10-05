@@ -5,12 +5,15 @@ import { bindActionCreators } from 'redux';
 import { browserHistory } from 'react-router';
 import { SubmissionError } from 'redux-form';
 import * as actions from '../../actions/index';
+import Header from '../header';
+import { Button, Input, Form, CollapsibleItem, Modal} from 'react-materialize';
+
 
 const renderField = ({ input, label, type, meta: { touched, error } }) => (
   <div>
     <label>{label}</label>
     <div>
-      <input {...input} placeholder={label} type={type}/>
+      <Input {...input} className="auth-input" placeholder={label} type={type}/>
       {touched && error && <span>{error}</span>}
     </div>
   </div>
@@ -29,7 +32,7 @@ class Signup extends Component {
   renderSignupStatus() {
     if(!this.props.signupStatus){
       return (
-        <div> Signup here</div>
+        <h4> Signup here</h4>
       )
     }
     return (
@@ -40,16 +43,21 @@ class Signup extends Component {
   render() {
     const { handleSubmit, pristine, reset, submitting } = this.props;
     return (
-      <form onSubmit={handleSubmit(this.handleFormSubmit)}>
-        <Field name="username" type="text" component={renderField} label="Username"/>
-        <Field name="password" type="password" component={renderField} label="Password"/>
-        <Field name="repassword" type="password" component={renderField} label="Repeat Password"/>
-        <div>
-          <button type="submit" disabled={submitting}>Signup</button>
-          <button type="button" disabled={pristine || submitting} onClick={reset}>Clear Values</button>
-          <div>{this.renderSignupStatus()}</div>
+      <div>
+        <Header />
+        <div className="table-auth" >
+          <form  onSubmit={handleSubmit(this.handleFormSubmit)}>
+            <Field className="auth-input" name="username" type="text" component={renderField} label="Username"/>
+            <Field className="auth-input" name="password" type="password" component={renderField} label="Password"/>
+            <Field className="auth-input" name="repassword" type="password" component={renderField} label="Repeat Password"/>
+            <div>
+              <Button type="submit" disabled={submitting}>Signup</Button>
+              <Button type="button" disabled={pristine || submitting} onClick={reset}>Clear Values</Button>
+              <div>{this.renderSignupStatus()}</div>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
     )
   }
 }

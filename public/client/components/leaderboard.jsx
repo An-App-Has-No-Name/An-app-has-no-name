@@ -1,6 +1,7 @@
 import React, { Component }  from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../actions/index';
+import Header from './header';
 
 class Leaderboard extends Component {
 
@@ -11,21 +12,21 @@ class Leaderboard extends Component {
   renderScores() {
     if (!this.props.leaderboard) {
       return (
-        <div>
+        <div className="chat-room">
           Leaderboard is loading...
         </div>
       )
     } else {
       return (
-        <table className="table-question">
-          <tr>
-            <th>Position</th>
+        <table className="table-leaderboard">
+          <tr className="header-leaderboard">
+            <th>Rank</th>
             <th>Username</th>
             <th>Score</th>
           </tr>
           {this.props.leaderboard.scores.map((score) => {
             return (
-              <tr>
+              <tr className="score-leaderboard">
                 <td>{score.position}</td>
                 <td>{score.username}</td>
                 <td>{score.scoreVal}</td>
@@ -39,6 +40,10 @@ class Leaderboard extends Component {
   render(){
     return (
       <div>
+        <Header />
+        <div>
+          <h1>Leaderboard</h1>
+        </div>
         {this.renderScores()}
       </div>
     );

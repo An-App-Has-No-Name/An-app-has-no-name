@@ -18,7 +18,7 @@ class Header extends Component {
         <div>{this.props.signupStatus.data}</div>
       )
     }
-    return <div>Signin or Signup to save score!</div>
+    return <h5>Signin or Signup to save score!</h5>
   }
 
   // shouldComponentUpdate() {
@@ -28,6 +28,9 @@ class Header extends Component {
   render() {
     return (
       <div className="footer">
+        <span>
+          <Link to="/">  Home    |</Link>
+        </span>
         <span>
           <Link to="/users/signup">  Sign up    |</Link>
         </span>

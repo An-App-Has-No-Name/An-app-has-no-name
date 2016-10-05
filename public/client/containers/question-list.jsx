@@ -357,7 +357,7 @@ renderAllModals() {
         <div className="progress">
           <div className="indeterminate"></div>
         </div>
-        <Button onClick={this.closeModal}>Exit</Button>
+        <Button onClick={this.closeEndingModal}>Exit</Button>
       </div>
     ),
 
