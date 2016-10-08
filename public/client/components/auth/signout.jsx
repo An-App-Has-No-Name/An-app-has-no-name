@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../actions/index';
-import Header from '../header';
 
 class Signout extends Component {
   componentWillMount() {
@@ -9,12 +8,7 @@ class Signout extends Component {
   }
 
   render() {
-    return (
-      <div className="content">
-        <Header />
-        <h1> We hope to see you again soon...</h1>
-      </div>
-    )
+    return <div className="content">We hope to see you again soon...</div>
   }
 }
 

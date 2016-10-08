@@ -1,12 +1,12 @@
-const { Score } = require('../models/psql.config');
-const Moment = require('moment');
+const Score  = require('../models/psql.config');
+
 module.exports = {
   saveScore: (req, res) => {
     const score = req.body.score
     const id = req.body.id
     const username = req.body.username
     Score.sync().then((Score) => {
-      Score.create({score: score, userId: id, username})
+      Score.create({score: score, userId: id, username })
     })
     .then((score) => {
       if (score) {
@@ -19,7 +19,7 @@ module.exports = {
   getLeaderboard: (req, res) => {
     const scoresToSend = [];
     Score.sync().then((Score) => {
-      Score.findAll({order:'score DESC', limit: 20})
+      Score.findAll({order:'score DESC'})
       .then((scores) => {
         if (!scores) {
           res.status(200).json({data: "Sorry we couldn't fetch the scores for you."});
@@ -28,9 +28,7 @@ module.exports = {
             const username = score.dataValues.username;
             const scoreVal = score.dataValues.score;
             const position = i+1;
-            const time = new Date(score.createdAt + "UTC");
-
-            scoresToSend.push({position, username, scoreVal, time});
+            scoresToSend.push({position, username, scoreVal});
           });
           return scoresToSend;
         }
