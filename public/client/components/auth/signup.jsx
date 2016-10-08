@@ -5,15 +5,12 @@ import { bindActionCreators } from 'redux';
 import { browserHistory } from 'react-router';
 import { SubmissionError } from 'redux-form';
 import * as actions from '../../actions/index';
-import Header from '../header';
-import { Button, Input, Form, CollapsibleItem, Modal} from 'react-materialize';
-
 
 const renderField = ({ input, label, type, meta: { touched, error } }) => (
   <div>
     <label>{label}</label>
     <div>
-      <Input {...input} className="auth-input" placeholder={label} type={type}/>
+      <input {...input} placeholder={label} type={type}/>
       {touched && error && <span>{error}</span>}
     </div>
   </div>
@@ -27,41 +24,32 @@ class Signup extends Component {
 
   handleFormSubmit(values) {
     this.props.signupUser(values);
-    // browserHistory.push('/');
+    browserHistory.push('/');
   }
-  // renderSignupStatus() {
-  //   if(!this.props.signupStatus){
-  //     return (
-  //       <h4> Signup here</h4>
-  //     )
-  //   }
-  //   return (
-  //     <div>{this.props.signupStatus.data}</div>
-  //   )
-  // }
+  renderSignupStatus() {
+    if(!this.props.signupStatus){
+      return (
+        <div> Signup here</div>
+      )
+    }
+    return (
+      <div>{this.props.signupStatus.data}</div>
+    )
+  }
 
   render() {
     const { handleSubmit, pristine, reset, submitting } = this.props;
     return (
-      <div>
-        <Header />
-        <div className="table-auth" >
-          <form  onSubmit={handleSubmit(this.handleFormSubmit)}>
-            <Field className="auth-input" name="username" type="text" component={renderField} label="Username"/>
-            <Field className="auth-input" name="password" type="password" component={renderField} label="Password"/>
-            <Field className="auth-input" name="repassword" type="password" component={renderField} label="Repeat Password"/>
-            <div>
-            <div>
-              { this.props.errorMessage && this.props.errorMessage.signup &&
-                  <div className="error-container">{ this.props.errorMessage.signup }</div> }
-            </div>
-              <Button type="submit" disabled={submitting}>Signup</Button>
-              <Button type="button" disabled={pristine || submitting} onClick={reset}>Clear Values</Button>
-              {/* <div>{this.renderSignupStatus()}</div> */}
-            </div>
-          </form>
+      <form onSubmit={handleSubmit(this.handleFormSubmit)}>
+        <Field name="username" type="text" component={renderField} label="Username"/>
+        <Field name="password" type="password" component={renderField} label="Password"/>
+        <Field name="repassword" type="password" component={renderField} label="Repeat Password"/>
+        <div>
+          <button type="submit" disabled={submitting}>Signup</button>
+          <button type="button" disabled={pristine || submitting} onClick={reset}>Clear Values</button>
+          <div>{this.renderSignupStatus()}</div>
         </div>
-      </div>
+      </form>
     )
   }
 }
@@ -97,7 +85,6 @@ const validate = props => {
 function mapStateToProps(state){
   return {
     signupStatus: state.AuthReducer,
-    errorMessage: state.AuthReducer.error,
   };
 }
 

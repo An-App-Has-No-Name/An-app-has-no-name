@@ -11,7 +11,6 @@ import ResultDetail from './result-detail';
 import * as audio from '../audio';
 import {customStyles} from '../helpers/lodashHelper.js';
 import path from 'path';
-import { Button } from 'react-materialize';
 
 const ReactToastr = require("react-toastr");
 const {ToastContainer} = ReactToastr;
@@ -51,6 +50,7 @@ class QuestionList extends Component {
   }
 
   componentWillUnmount() {
+    console.log(this.state.roomId)
     if (this.state.roomId) {
       this.changeScore(0);
       this.leaveRoomInMiddle();
@@ -78,6 +78,7 @@ class QuestionList extends Component {
 componentDidMount() {
   this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave)
   Socket.on('receiveOpenOrder', (data) => {
+    console.log(data);
     this.setState({
       modalOpen: !data.modalOpen,
       chosenQuestion: [data.question._id, ...this.state.chosenQuestion],
@@ -111,6 +112,7 @@ componentDidMount() {
 
 //When a user left
   Socket.on('userleaving', (data) => {
+    console.log('LEaving');
     Materialize.toast('The other player left', 4000);
     //Call gameOver with data
     this.setState({gameOver: true});
@@ -161,15 +163,10 @@ openModal(question) {
     const id = localStorage.getItem('id');
     const score = this.props.playerOneScore;
     const username = localStorage.getItem('username');
-    localStorage.setItem('score', score);
-    if (username) {
-      // console.log('Username from sendScore(): ', username);
-      const scoreData = { score, id, username }
-      this.props.saveScore(scoreData)
-      // console.log(scoreData, "Score being saved: " ,scoreData);
-    } else {
-     console.log("Score can't be saved without username. Username: ", username, score);
-    }
+
+    const scoreData = { score, id, username }
+    console.log(scoreData, "HERE'S THE SCORE");
+    this.props.saveScore(scoreData)
   }
 
 leaveRoomInMiddle() {
@@ -217,7 +214,7 @@ closeResult(){
 
   // Single Player mode
 
-  if (!this.state.roomId && this.state.singleP.length === 25) {
+  if (!this.state.roomId && this.state.singleP.length === 26) {
       this.setState({gameOver: true});
       this.gameOver();
   }
@@ -263,7 +260,7 @@ renderQuestion(questions) {
   const { modalOpen } = this.state;
   return questions.map(question => {
     return (
-      <div className="well list-question"
+      <div className="list-question"
         onClick={(e) => {
             e.preventDefault()
             this.openModal(question)
@@ -347,19 +344,20 @@ renderAllModals() {
   let loadingView = {
     loading: (
       <div className="loading singleP">
-        <h2>Loading the questions, be ready, calm down, sit tight!...</h2>
+        <h1>Loading the questions, be ready, calm down, sit tight!...</h1>
         <div className="progress">
           <div className="indeterminate"></div>
         </div>
       </div>
+
     ),
     waitingHost: (
       <div className="waitingHost">
-        <h2>Waiting for host, calm down, sit tight... </h2>
+        <h1>Waiting for host, calm down, sit tight... </h1>
         <div className="progress">
           <div className="indeterminate"></div>
         </div>
-        <Button onClick={this.closeEndingModal}>Exit</Button>
+        <button onClick={this.closeModal}>Exit</button>
       </div>
     ),
 
@@ -371,14 +369,14 @@ renderAllModals() {
     endingView: function(callback){
       return (
         <div>
-          <h2>Your score: {this.props.playerOneScore}</h2>
+          <h1>Your score: {this.props.playerOneScore}</h1>
           {/* check if Multiplayer mode or not */}
           {this.state.roomId ?
-            <div><h2>Opponent: {this.state.playerTwoScore}</h2>
+            <div><h1>Player 2: {this.state.playerTwoScore}</h1>
             {showWinner}</div> : null
           }
 
-          <Button onClick={callback}>Go to home page</Button>
+          <button onClick={callback}>Go to home page</button>
         </div>
         )
       }.bind(this),
@@ -387,6 +385,7 @@ renderAllModals() {
       return (
         <div>
           <QuestionDetail  closeModal={this.closeModal} roomId={this.state.roomId} getScore={this.getScore}/>
+          <button onClick={callback}>Close</button>
         </div>
       )
     }.bind(this),
@@ -396,16 +395,14 @@ renderAllModals() {
         <div>
           <ResultDetail  roomId={this.state.roomId} Player1={this.state.p1ScoreResultModal} Player2={this.state.p2ScoreResultModal} Correct={this.state.answerResultModal} />
           <ReactCountDownClock
-            seconds={3}
+            seconds={5}
             color="#26a69a"
             alpha={1.5}
             showMilliseconds={false}
             size={75}
             onComplete={callback}
           />
-          <div className="close-result-button" >
-            <Button  onClick={callback}>Close</Button>
-          </div>
+        <button onClick={callback}>Close</button>
         </div>
       )
     }.bind(this)
