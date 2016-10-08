@@ -3,6 +3,7 @@
 const express = require('express');
 const httpProxy = require('http-proxy');
 const path = require('path');
+const db = require('./models/psql.config')
 let gameSocket;
 
 const app = express();
@@ -74,14 +75,10 @@ io.on('connection', function (socket) {
 
   gameSocket = socket;
   gameSocket.on('JoinRoom', JoinRoom);
-  gameSocket.on('fetchUserInfo', (data) => {
-    socket.broadcast.to(data.roomId).emit('gotUserInfo', data);
-  });
   gameSocket.on('CreateRoom', CreateRoom);
   gameSocket.on('fetchQuestions', fetchQuestions);
   gameSocket.on('openModal', (data) => {
     io.sockets.in(data.roomId).emit('receiveOpenOrder', data);
-    this.emit('myTurn', false);
     socket.broadcast.to(data.roomId).emit('turnChange', {yourTurn: true});
   });
   gameSocket.on('closeModal', closeModal);
@@ -90,17 +87,17 @@ io.on('connection', function (socket) {
   gameSocket.on('checkRoom', checkRoom);
   gameSocket.on('gameStart', gameStart);
   gameSocket.on('message', getMessages);
-  gameSocket.on('changingScore', (data) => {
+  gameSocket.on('changingScore', function(data) {
 
     socket.broadcast.to(data.roomId).emit('broadcastScore', data);
   });
 
   gameSocket.on('leaveRoomInMiddle', leaveRoomInMiddle);
 
-  gameSocket.on('leaveRoomAndEndGame', (roomId) => {
+  gameSocket.on('leaveRoomAndEndGame', function(roomId) {
     gameSocket.leave(roomId);
   });
-  gameSocket.on('disconnect', () => {
+  gameSocket.on('disconnect', function(){
     console.log("User disconnected");
 
   });
@@ -122,21 +119,18 @@ const CreateRoom = function(host){
   let data = {
     room: roomId,
     mySocketId: this.id,
-    roomList: roomId.toString(),
-
+    roomList: roomId.toString()
   };
   this.emit('newGameCreated', data);
-
-  //Broadcast to everone in the room including you
   io.sockets.emit('newRoomCreated', data);
   console.log('server create room', roomId, this.id);
 
 };
 
+
 const JoinRoom = function(data){
 
     let room = gameSocket.nsp.adapter.rooms[data.roomId];
-
     if (room !== undefined) {
 
       if (room.length <= 1) {
@@ -177,7 +171,7 @@ const closeResult = function(data) {
 };
 
 const trackingGame = function(data) {
-  if (data.chosenQuestion === 25) {
+  if (data.chosenQuestion === 24) {
     io.sockets.in(data.roomId).emit('gameOver', {gameOver: true});
     gameSocket.leave(data.roomId);
   } else {
@@ -204,7 +198,9 @@ const gameStart = function(data) {
 };
 
 const getMessages = function(data){
+  console.log(data);
   io.sockets.emit('message', data);
+  this.emit('turnChange', {yourTurn: true})
 };
 
 const leaveRoomInMiddle = function(roomId) {

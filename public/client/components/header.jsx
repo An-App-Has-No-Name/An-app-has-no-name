@@ -1,62 +1,45 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import { checkAuth } from '../actions/index';
+
 class Header extends Component {
-    constructor(props) {
-    super(props);
-    this.renderSigninStatus = this.renderSigninStatus.bind(this);
-    this.renderLogoutStatus = this.renderLogoutStatus.bind(this); 
+
+  forceUpdate() {
+    return this.renderStatus();
   }
-  // forceUpdate() {
-  //   return this.renderStatus();
-  // }
-  renderSigninStatus() {
-    if(this.props.username){
+  renderStatus() {
+    if(this.props.loginStatus){
       return (
-        <h5 className="auth-nav">You're signed in as {this.props.username}</h5>
+        <div>{this.props.loginStatus.data}</div>
       )
     }
+    if(this.props.signupStatus){
+      return (
+        <div>{this.props.signupStatus.data}</div>
+      )
+    }
+    return <div>Signin or Signup to save score!</div>
   }
-  renderLogoutStatus() {
-    return (
-      <h5 className="auth-nav">Signin or Signup to save score!</h5>
-    )
-  }
+
+  // shouldComponentUpdate() {
+  //   this.renderStatus();
+  // }
 
   render() {
     return (
-      <nav className="navbar navbar-default navbar-top">
-        <div className="container-fluid">
-          <ul className="nav navbar-nav">
-            <li >
-              <Link className="li-header" to="/">Home</Link>
-            </li>
-            <li>
-              <Link className="li-header" to="/scores/leaderboard">Leaderboard</Link>
-            </li>
-            <div className="auth-nav"> {this.props.authenticated}
-            { this.props.authenticated ?
-              <li>
-                {this.renderSigninStatus()}
-                <Link to="/users/signout">Signout</Link>
-              </li>
-                :
-              <li>
-                {this.renderLogoutStatus()}
-                <li>
-                  <Link to="/users/signin">Signin</Link>
-                </li>
-                <li>
-                  <Link to="/users/signup">Create Account</Link>
-                </li>
-              </li>
-            }
-            </div>
-            {/* <span >{this.forceUpdate()}</span> */}
-          </ul>
-        </div>
-      </nav>
+      <div className="footer">
+        <span>
+          <Link to="/users/signup">  Sign up    |</Link>
+        </span>
+        <span>
+          <Link to="/users/signin">  Sign in    |</Link>
+        </span>
+        <span>
+          <Link to="/users/signout">  Signout    |</Link>
+          <Link to="/scores/leaderboard">  Leaderboard  </Link>
+        </span>
+        <span>{this.forceUpdate()}</span>
+      </div>
     )
   }
 }
@@ -64,10 +47,8 @@ class Header extends Component {
 function mapStateToProps(state) {
   return {
     loginStatus: state.SigninReducer,
-    // signupStatus: state.AuthReducer,
-    authenticated: state.AuthReducer.authenticated,
-    username: state.AuthReducer.username,
+    signupStatus: state.AuthReducer,
   };
 }
 
-export default connect(mapStateToProps, {checkAuth})(Header);
+export default connect(mapStateToProps)(Header);
