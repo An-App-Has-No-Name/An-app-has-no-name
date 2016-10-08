@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import Socket from '../socket';
+import Moment from 'moment';
+import { Button, Card, Collapsible, CollapsibleItem, Modal} from 'react-materialize';
 
 
 export default class Chatbox extends Component {
@@ -34,9 +36,11 @@ export default class Chatbox extends Component {
     const body = e.target.value;
 
     if (e.keyCode === 13 && body) {
-      const data = {
+
+    const data = {
         message: body,
-        from: this.state.username
+        from: this.state.username,
+        time: Moment().format("LT")
       };
     Socket.emit('message', data);
     e.target.value = '';
@@ -46,10 +50,18 @@ export default class Chatbox extends Component {
 
   render(){
     const messages = this.state.messages.map((data, index) => {
-      return <li key={index}>{data.from ? data.from : "Guest"}: {data.message}</li>
+      return (
+        <li key={index}>{data.from ? data.from : "Guest"}: {data.message} <span className="timestamp">{data.time}</span></li>
+      );
     });
     return (
+
+
       <div>
+
+        <div className="chat-container">
+          <h3 className="chat-room">Trivardy Chatroom</h3>
+        </div>
         <div className="message-container">
           <div className="Messages">
             <ul className="chat">{messages}</ul>
@@ -66,6 +78,7 @@ export default class Chatbox extends Component {
             </form>
           </div>
       </div>
+
     );
   }
 }

@@ -10,24 +10,20 @@ class Score extends Component {
       this.props.changeScore(0);
     } else {
       this.props.changeScore(this.props.score);
-      console.log("dddddd", this.props.score);
     }
   }
 
-
   render() {
-
-    console.log("what is data", this.props.score);
-      return (
-        <div>
-          <div className="panel panel-default">
-            <div className="panel-heading">Your score</div>
-            <div className="panel-body">
-              {this.props.score}
-            </div>
+    return (
+      <div>
+        <div className="panel panel-default">
+          <div className="panel-heading" style={this.props.turnStyle}>Your score</div>
+          <div className="panel-body">
+            {this.props.score}
           </div>
         </div>
-      );
+      </div>
+    );
   }
 }
 

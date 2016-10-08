@@ -7,12 +7,27 @@ import 'react-widgets/dist/css/react-widgets.css';
 import { fetchQuestions } from '../actions/index';
 import { Button, Card, Collapsible, CollapsibleItem, Modal} from 'react-materialize';
 
-const renderMultiselect = ({ input, ...rest }) =>
-  <Multiselect {...input}
-    onBlur={() => input.onBlur()}
-    value={input.value || []}
-    {...rest}
-  />
+const renderMultiselect = ({ input, ...rest }) => {
+  if (input['value'].length >= 5) {
+    return (
+       <div>
+          <Multiselect {...input}
+            onBlur={() => input.onBlur()}
+            value={input.value || []}
+          />
+        <div>You can only choose 5 categories.</div>
+        </div>
+    )
+  }
+  return (
+  <div>
+    <Multiselect {...input}
+      onBlur={() => input.onBlur()}
+      value={input.value || []}
+      {...rest}
+    />
+  </div>)
+}
 
 const categoriesList =  [
   'General Knowledge',
@@ -52,7 +67,7 @@ class SelectCategories extends Component {
   }
 
   render() {
-    const { handleSubmit, pristine, reset, submitting } = this.props;
+    const { handleSubmit, pristine, reset, submitting, maxLength } = this.props;
     return (
       <div>
         <form onSubmit={handleSubmit(this.submit)}>
@@ -76,6 +91,7 @@ class SelectCategories extends Component {
     )
   }
 }
+
 
 const SelectCatForm = reduxForm({
   form: 'selectCatForm',

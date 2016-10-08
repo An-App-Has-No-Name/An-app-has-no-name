@@ -31,8 +31,14 @@ module.exports = {
     'Vehicles',
   ],
 
-  getRandomCategories: () => {
-    return module.exports.randomize(module.exports.categoriesList, 5);
+  getRandomCategories: (max = 5, pickedCat = []) => {
+    let filterCategories = _.without(module.exports.categoriesList, ...pickedCat);
+    
+    if (filterCategories) {
+      return module.exports.randomize(filterCategories, max);
+    } else {
+      return module.exports.randomize(module.exports.categoriesList, max);
+    }
   },
 
   getRandomQuestions: (cate, questions) => {
@@ -70,6 +76,25 @@ module.exports = {
       question.difficulty = (difficultyScore += 100);
       question.clicked = false;
     });
+
     return result;
+  },
+
+  randomDouble: function(questionList) {
+    const getRandomArbitrary = function(min, max) {
+      return Math.floor(Math.random() * (max - min) + min);
+    };
+    const allCategories =  Object.keys(questionList);
+    console.log("random Num", getRandomArbitrary(0, allCategories.length));
+    const randCat = allCategories[getRandomArbitrary(0, allCategories.length)];
+
+    const randomQuestion = questionList[randCat][getRandomArbitrary(0, 5)];
+
+
+    randomQuestion.dailyDouble = randomQuestion.difficulty * 3;
+
+    console.log("dailyDouble", randomQuestion);
+
+    return questionList;
   }
 };
