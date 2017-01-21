@@ -157,7 +157,7 @@ const closeResult = function(data) {
 };
 
 const trackingGame = function(data) {
-  if (data.chosenQuestion === 25) {
+  if (data.chosenQuestion === 3) {
     io.sockets.in(data.roomId).emit('gameOver', {gameOver: true});
     gameSocket.leave(data.roomId);
   }

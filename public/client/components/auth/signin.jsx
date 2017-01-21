@@ -11,10 +11,9 @@ import { Button, Input, Form, CollapsibleItem, Modal} from 'react-materialize';
 
 const renderField = ({ input, label, type, meta: { touched, error } }) => (
   <div>
-    <label>{label}</label>
     <div>
       <Input {...input} placeholder={label} type={type}/>
-      {touched && error && <span>{error}</span>}
+      { touched && error && <div className="form-error">{error}</div> }
     </div>
   </div>
 )
@@ -22,25 +21,13 @@ const renderField = ({ input, label, type, meta: { touched, error } }) => (
 class Signin extends Component {
   constructor (props) {
     super(props);
-    // this.props.signinUser = this.props.props.signinUser.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
   }
 
   handleFormSubmit(values) {
     console.log(values, 'values');
     this.props.signinUser(values);
-    // browserHistory.push('/');
   }
-  // renderLoginStatus() {
-  //   if(!this.props.loginStatus){
-  //     return (
-  //       <h4>Sign in to save scores!</h4>
-  //     )
-  //   }
-  //   return (
-  //     <div>{this.props.loginStatus.data}</div>
-  //   )
-  // }
 
   render() {
     const { handleSubmit, pristine, reset, submitting } = this.props;
@@ -48,20 +35,21 @@ class Signin extends Component {
       <div>
         <Header />
         <div className="table-auth" >
+          <div className="auth-header">Sign In</div>
           <form  onSubmit={handleSubmit(this.handleFormSubmit)}>
             <Field id="input-group" name="username" type="text" component={renderField} label="Username"/>
             <Field id="input-group" name="password" type="password" component={renderField} label="Password"/>
-            <div>
+            <div className="button-wrapper-parent">
               { this.props.errorMessage && this.props.errorMessage.signin &&
                 <div className="error-container signin-error"> { this.props.errorMessage.signin }</div> }
-              <Button type="submit" disabled={submitting}>Log In</Button>
-              <Button type="button" disabled={pristine || submitting} onClick={reset}>Clear Values</Button>
-              <div>
+              <div className="button-wrapper">  
+                <Button type="submit" disabled={submitting}>Log In</Button>
+                <Button type="button" disabled={pristine || submitting} onClick={reset}>Clear Values</Button>
+              </div>
+              <div className="auth-option">
                 <Link to='/users/signup'>Sign Up instead
-                  {/* <Button waves='light'>Sign Up instead</Button> */}
                 </Link>
               </div>
-              {/* <div>{this.renderLoginStatus()}</div> */}
             </div>
           </form>
         </div>
@@ -72,22 +60,19 @@ class Signin extends Component {
 
 const validate = props => {
   const errors = {};
-  const fields = ['username', 'password'];
+  const fields = {'username': 'Username', 'password': 'Password'};
 
-  fields.forEach((f) => {
+  Object.keys(fields).forEach((f) => {
     if(!(f in props)) {
-      errors[f] = `${f} is required`;
+      errors[f] = `${fields[f]} is required!`;
     }
   });
-
   return errors;
 }
 
 function mapStateToProps(state){
   return {
-    // loginStatus: state.SigninReducer,
     errorMessage: state.AuthReducer.error,
-
   };
 }
 

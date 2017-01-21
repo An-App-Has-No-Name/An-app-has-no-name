@@ -11,10 +11,10 @@ import { Button, Input, Form, CollapsibleItem, Modal} from 'react-materialize';
 
 const renderField = ({ input, label, type, meta: { touched, error } }) => (
   <div>
-    <label>{label}</label>
+    {/* <label>{label}</label> */}
     <div>
       <Input {...input} className="auth-input" placeholder={label} type={type}/>
-      {touched && error && <span>{error}</span>}
+      { touched && error && <div className="form-error">{error}</div> }
     </div>
   </div>
 )
@@ -47,19 +47,22 @@ class Signup extends Component {
         <Header />
         <div className="table-auth" >
           <form  onSubmit={handleSubmit(this.handleFormSubmit)}>
+            <div className="auth-header">Sign Up</div>
             <Field className="auth-input" name="username" type="text" component={renderField} label="Username"/>
             <Field className="auth-input" name="password" type="password" component={renderField} label="Password"/>
             <Field className="auth-input" name="repassword" type="password" component={renderField} label="Repeat Password"/>
-            <div>
-            <div>
-              { this.props.errorMessage && this.props.errorMessage.signup &&
-                  <div className="error-container">{ this.props.errorMessage.signup }</div> }
-            </div>
-              <Button type="submit" disabled={submitting}>Signup</Button>
-              <Button type="button" disabled={pristine || submitting} onClick={reset}>Clear Values</Button>
+            <div className="button-wrapper-parent">
               <div>
-                <Link to='/users/signin'>
-                  <Button waves='light'>Sign In instead</Button>
+                { this.props.errorMessage && this.props.errorMessage.signup &&
+                    <div className="error-container">{ this.props.errorMessage.signup }</div> }
+              </div>
+              <div className="button-wrapper"> 
+                <Button type="submit" disabled={submitting}>Signup</Button>
+                <Button type="button" disabled={pristine || submitting} onClick={reset}>Clear Values</Button>
+              </div>
+              <div className="auth-option">
+                <Link to='/users/signin'>Sign In instead
+                  {/* <Button waves='light'>Sign In instead</Button> */}
                 </Link>
               </div>
               {/* <div>{this.renderSignupStatus()}</div> */}
@@ -73,11 +76,11 @@ class Signup extends Component {
 
 const validate = props => {
   const errors = {};
-  const fields = ['username', 'password', 'repassword'];
+  const fields = {'username': 'Username', 'password': 'Password', 'repassword': 'Repeat Password'};
 
-  fields.forEach((f) => {
+  Object.keys(fields).forEach((f) => {
     if(!(f in props)) {
-      errors[f] = `${f} is required`;
+      errors[f] = `${fields[f]} is required!`;
     }
   });
 

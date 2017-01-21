@@ -60,8 +60,8 @@ tr.score-leaderboard:nth-child(odd) {
   width: 60%;
   margin: 50px 20%;
   border: solid #adadad;
-  background-color: #55595c
-
+  background-color: #55595c;
+  margin-top: 120;
 }
 .wrap {
   position: absolute;
@@ -304,7 +304,7 @@ li:nth-child(odd){
 input {
   text-align: center;
   color: #26a69a;
-  font-size: 25px !important;
+  font-size: 20px !important;
 }
 #input-group {
   color: #26a69a;
@@ -350,4 +350,45 @@ img {
 
 .auth-nav {
   color: white;
+}
+
+.auth-option {
+  margin: 10px;
+}
+
+.auth-option a{
+  font-size: 20px;
+}
+
+.auth-header  {
+  font-family: 'Bevan', cursive;
+  color: white;
+  font-size: 25px;
+  line-height: 3.5;
+  border-bottom: solid #adadad;
+}
+
+.form-error {
+  color: #e15258;
+  font-size: 17px;
+}
+
+.input-field {
+  width: 98%;
+  padding-left: 2%;
+}
+
+.button-wrapper {
+  margin: 15px 0;
+}
+
+.save-score a {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.save-score span {
+  color: #55595c;
+  font-family: 'Bevan', cursive;
+  font-weight: 100 !important;
+  font-size: 25px;
 }
