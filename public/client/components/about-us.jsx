@@ -8,6 +8,9 @@ export default class About extends Component {
     return (
       <div>
       <Header />
+      <h1>About Trivardy</h1>
+      <div className='names'>A browser based real-time multiplayer trivia game, playable on multiple computers. You can also chat with their friends in real-time</div>
+      <div className='names'>Built using React and Redux on the front-end with Node and Express on the back-end. The realtime aspect utilized Socket.io.</div>
 
       <h1>Trivardy Developers</h1>
       <div className='row'>
