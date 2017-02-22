@@ -205,7 +205,7 @@ class Main extends Component {
     return (
       <div className="page-wrap">
         <Header />
-        <h1>Trivardy</h1>
+        <h1>TheTrivardy</h1>
         <Modal
           id="singlePlayerModal"
           header='Single Player mode'
