@@ -8,18 +8,18 @@ let gameSocket;
 const app = express();
 
 
-// db.Score.sync().then((Score)=>{
-//   Score.create({score: 100, userId: 2, username: 'snape'})
-// })
-// db.Score.sync().then((Score)=>{
-//   Score.findAll({order:'score DESC'}).then((scores)=>{
-//     scores.forEach((score)=>{
-//       console.log('--------');
-//       console.log(score.dataValues.id, score.dataValues.score);
-//     })
-//     console.log("HERER DA STUFFZ");
-//   })
-// })
+db.Score.sync().then((Score)=>{
+  Score.create({score: 100, userId: 2, username: 'snape'})
+})
+db.Score.sync().then((Score)=>{
+  Score.findAll({order:'score DESC'}).then((scores)=>{
+    scores.forEach((score)=>{
+      console.log('--------');
+      console.log(score.dataValues.id, score.dataValues.score);
+    })
+    console.log("HERER DA STUFFZ");
+  })
+})
 
 const proxy = httpProxy.createProxyServer({
   changeOrigin: true
