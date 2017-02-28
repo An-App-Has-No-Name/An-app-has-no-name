@@ -5,9 +5,6 @@ import { bindActionCreators } from 'redux';
 import { browserHistory, Link } from 'react-router';
 import { SubmissionError } from 'redux-form';
 import * as actions from '../../actions/index';
-import Header from '../header';
-import { Button, Input, Form, CollapsibleItem, Modal} from 'react-materialize';
-
 
 const renderField = ({ input, label, type, meta: { touched, error } }) => (
   <div>
@@ -27,18 +24,18 @@ class Signup extends Component {
 
   handleFormSubmit(values) {
     this.props.signupUser(values);
-    // browserHistory.push('/');
+    browserHistory.push('/');
   }
-  // renderSignupStatus() {
-  //   if(!this.props.signupStatus){
-  //     return (
-  //       <h4> Signup here</h4>
-  //     )
-  //   }
-  //   return (
-  //     <div>{this.props.signupStatus.data}</div>
-  //   )
-  // }
+  renderSignupStatus() {
+    if(!this.props.signupStatus){
+      return (
+        <div> Signup here</div>
+      )
+    }
+    return (
+      <div>{this.props.signupStatus.data}</div>
+    )
+  }
 
   render() {
     const { handleSubmit, pristine, reset, submitting } = this.props;
@@ -76,11 +73,11 @@ class Signup extends Component {
 
 const validate = props => {
   const errors = {};
-  const fields = {'username': 'Username', 'password': 'Password', 'repassword': 'Repeat Password'};
+  const fields = ['username', 'password', 'repassword'];
 
-  Object.keys(fields).forEach((f) => {
+  fields.forEach((f) => {
     if(!(f in props)) {
-      errors[f] = `${fields[f]} is required!`;
+      errors[f] = `${f} is required`;
     }
   });
 

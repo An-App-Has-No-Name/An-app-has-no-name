@@ -63,21 +63,14 @@ tr.score-leaderboard:nth-child(odd) {
   background-color: #55595c;
   margin-top: 120;
 }
+
 .wrap {
+  height: 110%;
   position: absolute;
   width: 100%;
 }
-nav ul a {
-  transition: background-color .3s;
-  font-size: 1.5rem;
-  color: #fff;
-  cursor: pointer;
-  margin-top: -6;
-}
 .navbar {
   margin: 0 auto;
-  color: white;
-  background-color: #26a69a;
 }
 .question-answer {
   font-size: 30px;
@@ -105,17 +98,9 @@ nav ul a {
   color: black;
   font-size: 30px;
 }
-#games {
-  width: 300px;
-  height: 50px;
-  font-size: 30px;
-}
+
 .waves-effect {
   margin: 0 10px;
-  position: initial;
-}
-.close-result-button {
-  padding: 5px;
 }
 /*this is for category*/
 .list-header-item {
@@ -134,9 +119,6 @@ nav ul a {
   justify-content: center;
 }
 
-td, th {
-  border-radius: 0 !important;
-}
 /* this is for each individial question */
 .list-question:before {
   content: '$'
@@ -212,44 +194,23 @@ td, th {
   font-size: 30px;
   font-weight: 700;
 }
-.footer {
+.footer{
   color: #26a69a;
 }
 a {
-  color: #26a69a;
-  text-align: center;
+  color: #26a69a
 }
-
-.chat-container{
-  height: 100px;
+.message-container {
+  overflow: auto;
+  height: 400px;
   width: 60%;
   margin-left: 20%;
   border: solid #adadad;
   margin-top: 30px;
-  background-color: #55595c;
-
-}
-.chat-room {
-  text-align: center;
-  color: #26a69a;
-}
-.message-container {
-  overflow: auto;
-  height: 300px;
-  width: 60%;
-  margin-left: 20%;
-  border: solid #adadad;
-  margin-top: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   color: white;
   background-color: #55595c;
 }
-
-.timestamp {
-  float: right;
-  text-align: right;
-}
-
 .collapsible.popout {
   margin-left: 15%;
 }
@@ -263,36 +224,17 @@ a {
   width: 50%;
   margin-left: 25%;
 }
-
-.join-room {
-  animation: blinker 3s linear infinite;
-}
-
-@keyframes blinker {
-  50% { opacity: 0; }
-}
-
 ul {
   list-style: none;
   text-align: left;
   font-size: 30px;
   width: 95%;
-  margin-left: 20px;
-}
-.form-sign {
-  margin: 40px;
-  background-color: #55595c;
-  border: solid #adadad;
-  text-align: center;
+  margin-left: 5px;
 }
 
-.auth-input {
+input {
   text-align: center;
-  font-size: 30px;
-  color: #26a69a;
-}
-label {
-  font-size: 3rem
+  font-size: 1em;
 }
 
 li:nth-child(odd){
@@ -309,32 +251,6 @@ input {
 #input-group {
   color: #26a69a;
   font-size: 30px;
-  text-align: center;
-}
-
-img {
-  border-radius: 60%;
-}
-.names{
-  color: #26a69a;
-  text-align: center;
-}
-.pictures {
-  display: inline-block;
-  margin: 0 30px 0 30px;
-  text-align: center;
-}
-
-.logo {
-  margin-top: 20px;
-}
-
-.about {
-  text-align: center;
-}
-
-.row {
-  margin-top: 40px;
 }
 
 .bottom-align-text {

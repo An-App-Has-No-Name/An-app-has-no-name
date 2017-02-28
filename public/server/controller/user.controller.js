@@ -1,11 +1,12 @@
-const { User } = require('../models/psql.config');
+const User  = require('../models/psql.config');
 const jwt  = require('jwt-simple');
 
 module.exports = {
   signup: (req, res) => { //
     User.sync()
     .then((User) => {
-      const { username, password } = req.body;
+      const username = req.body;
+      const password = req.body;
       if (!username || !password) {
         return res.json({ data: "All fields are required." });
       }
@@ -15,7 +16,7 @@ module.exports = {
           const token = jwt.encode(user, 'secret');
           user.update({token, token})
             .then(() => {
-              res.status(200).send({token, username, id: user.id, data: "You have been signed up!"});
+              res.status(200).json({token, data: "You have been signed up!"});
             });
         } else {
           res.status(422).send({error: "Oops! Username already exists!"});
@@ -24,7 +25,7 @@ module.exports = {
     });
   },
 
-  signin: (req, res) => {  //
+signin: (req, res) => {  //
     User.sync()
     .then((User) => {
       const { username, password } = req.body;
@@ -53,4 +54,3 @@ module.exports = {
   signout: (req, res) => {
     res.sendFile(path.resolve(__dirname, '../', 'index.html'));
   },
-}

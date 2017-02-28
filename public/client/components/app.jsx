@@ -43,7 +43,6 @@ class App extends Component {
     });
   }
 
-
   renderScore() {
     if (this.state.roomId) {
       let turnStyle;
@@ -91,6 +90,5 @@ function mapStateToProps(state){
     userInfo: state.UserInfoReducer,
   };
 }
-
 
 export default connect(mapStateToProps, { saveUserInfo})(App);

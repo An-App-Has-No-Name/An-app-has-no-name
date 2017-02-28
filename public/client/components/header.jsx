@@ -7,10 +7,8 @@ class Header extends Component {
     super(props);
     this.renderSigninStatus = this.renderSigninStatus.bind(this);
     this.renderLogoutStatus = this.renderLogoutStatus.bind(this);
-  }
-  // forceUpdate() {
-  //   return this.renderStatus();
-  // }
+    }
+
   renderSigninStatus() {
     if(this.props.username){
       return (
@@ -22,6 +20,7 @@ class Header extends Component {
       )
     }
   }
+
   renderLogoutStatus() {
     return (
       <h5 className="auth-nav">to save score!</h5>

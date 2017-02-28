@@ -10,9 +10,6 @@ module.exports = createConstants(
   'LOGIN_USER_REQUEST',
   'FETCH_MULTI_QUESTIONS',
   'SIGNUP_SUCCESS',
-  'SIGNUP_FAILURE',
-  'SIGNIN_FAILURE',
-  'AUTH_USER',
   'UNAUTH_USER',
   'RESET_QUESTION',
   'USER_INFO',
@@ -22,4 +19,3 @@ module.exports = createConstants(
   'GET_USER_INFO',
   'OPPONENT_INFO'
 );
-

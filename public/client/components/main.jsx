@@ -17,7 +17,6 @@ import {customStyles} from '../helpers/modalStyle.js';
 import Chatbox from './chatbox';
 import { Button, Card, Collapsible, CollapsibleItem, Modal} from 'react-materialize';
 
-
 class Main extends Component {
 
   constructor(props) {
@@ -208,7 +207,7 @@ class Main extends Component {
     return (
       <div className="page-wrap">
         <Header />
-        <h1 className='title'>Trivardy</h1>
+        <h1>Trivardy</h1>
         <Modal
           id="singlePlayerModal"
           header='Single Player mode'
@@ -252,12 +251,11 @@ class Main extends Component {
             }
             style={customStyles}
             shouldCloseOnOverlayClick={false}>
-            <h2>Player joined! Press Start to Play</h2>
+            <h1>Player joined! Press Start to Play</h1>
             {this.state.roomCreated ? html.startGameButton : null}
           </Modals>
         </div>
         <Chatbox />
-        <Link to="/about"><h5>About us</h5></Link>
       </div>
     );
   }

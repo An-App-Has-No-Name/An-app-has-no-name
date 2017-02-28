@@ -6,7 +6,7 @@ export default class ReactDetail extends Component {
     super(props);
   }
 
-  renderResult(correctAnswer) {
+  renderResult() {
     if(this.props.roomId){
       return (
         <div>
@@ -30,7 +30,7 @@ export default class ReactDetail extends Component {
     const correctAnswer = he.decode(this.props.Correct)
     return (
       <div className="result-modal">
-        {this.renderResult(correctAnswer)}
+        {this.renderResult()}
       </div>
     );
   }

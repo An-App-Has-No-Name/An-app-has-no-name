@@ -3,23 +3,24 @@
 const express = require('express');
 const httpProxy = require('http-proxy');
 const path = require('path');
+const db = require('./models/psql.config')
 let gameSocket;
 
 const app = express();
 
 
-db.Score.sync().then((Score)=>{
-  Score.create({score: 100, userId: 2, username: 'snape'})
-})
-db.Score.sync().then((Score)=>{
-  Score.findAll({order:'score DESC'}).then((scores)=>{
-    scores.forEach((score)=>{
-      console.log('--------');
-      console.log(score.dataValues.id, score.dataValues.score);
-    })
-    console.log("HERER DA STUFFZ");
-  })
-})
+// db.Score.sync().then((Score)=>{
+//   Score.create({score: 100, userId: 2, username: 'snape'})
+// })
+// db.Score.sync().then((Score)=>{
+//   Score.findAll({order:'score DESC'}).then((scores)=>{
+//     scores.forEach((score)=>{
+//       console.log('--------');
+//       console.log(score.dataValues.id, score.dataValues.score);
+//     })
+//     console.log("HERER DA STUFFZ");
+//   })
+// })
 
 const proxy = httpProxy.createProxyServer({
   changeOrigin: true
@@ -87,7 +88,6 @@ io.on('connection', function (socket) {
 
   socket.on('openModal', (data) => {
     io.sockets.in(data.roomId).emit('receiveOpenOrder', data);
-    this.emit('myTurn', false);
     socket.broadcast.to(data.roomId).emit('turnChange', {yourTurn: true});
   });
   socket.on('closeModal', closeModal);
@@ -123,19 +123,15 @@ const CreateRoom = function(host){
   let data = {
     room: roomId,
     mySocketId: this.id,
-    roomList: roomId.toString(),
-
+    roomList: roomId.toString()
   };
   this.emit('newGameCreated', data);
-
-  //Broadcast to everone in the room including you
   io.sockets.emit('newRoomCreated', data);
 };
 
 const JoinRoom = function(data){
 
     let room = gameSocket.nsp.adapter.rooms[data.roomId];
-
     if (room !== undefined) {
 
       if (room.length <= 1) {
@@ -157,7 +153,7 @@ const closeResult = function(data) {
 };
 
 const trackingGame = function(data) {
-  if (data.chosenQuestion === 3) {
+  if (data.chosenQuestion === 25) {
     io.sockets.in(data.roomId).emit('gameOver', {gameOver: true});
     gameSocket.leave(data.roomId);
   }

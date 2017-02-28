@@ -31,7 +31,7 @@ module.exports = {
     'Vehicles',
   ],
 
-  getRandomCategories: (max = 5, pickedCat = []) => {
+getRandomCategories: (max = 5, pickedCat = []) => {
     let filterCategories = _.without(module.exports.categoriesList, ...pickedCat);
 
     if (filterCategories) {
