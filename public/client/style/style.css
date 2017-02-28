@@ -4,9 +4,64 @@ body {
 }
 
 h1 {
-    margin: 60px;
-    color: #26a69a;
-    font-size: 100px;
+  font-family: 'Bevan', cursive;
+  margin: 40px;
+  color: #26a69a;
+  font-size: 130px;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: white;
+}
+h2, h3, h4, h5{
+  font-family: 'Bevan', cursive;
+  color: #26a69a;
+}
+
+.title {
+  font-family: 'Bevan', cursive;
+  color: #26a69a;
+  margin: 40px;
+  font-size: 130px;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: white;
+}
+
+.header-leaderboard {
+  color: #26a69a;
+  font-size: 24px;
+  border: solid #adadad;
+}
+.auth-nav {
+  float: right;
+  color: white;
+}
+tr.score-leaderboard:nth-child(even) {
+  background-color: #adadad;
+}
+tr.score-leaderboard:nth-child(odd) {
+  background-color: #ccc;
+}
+
+.time{
+  float: right;
+}
+.timeHeader {
+  text-align: center;
+}
+.table-leaderboard {
+  width: 40%;
+  margin: 5% 0 5% 30%;
+  border: solid #adadad;
+  color: #333;
+  font-size: 20px;
+  font-weight: bold;
+}
+.table-auth {
+  text-align: center;
+  width: 60%;
+  margin: 50px 20%;
+  border: solid #adadad;
+  background-color: #55595c;
+  margin-top: 120;
 }
 
 .wrap {
@@ -182,10 +237,74 @@ input {
   font-size: 1em;
 }
 
-.chats li:nth-child(even) {
-  background: grey;
+li:nth-child(odd){
+  color: #26a69a;
+}
+.li-header {
+  font-size:25px;
+}
+input {
+  text-align: center;
+  color: #26a69a;
+  font-size: 20px !important;
 }
 #input-group {
   color: #26a69a;
   font-size: 30px;
+}
+
+.bottom-align-text {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+.error-container {
+  font-size: 21;
+  color: #d9534f;
+}
+
+.auth-nav {
+  color: white;
+}
+
+.auth-option {
+  margin: 10px;
+}
+
+.auth-option a{
+  font-size: 20px;
+}
+
+.auth-header  {
+  font-family: 'Bevan', cursive;
+  color: white;
+  font-size: 25px;
+  line-height: 3.5;
+  border-bottom: solid #adadad;
+}
+
+.form-error {
+  color: #e15258;
+  font-size: 17px;
+}
+
+.input-field {
+  width: 98%;
+  padding-left: 2%;
+}
+
+.button-wrapper {
+  margin: 15px 0;
+}
+
+.save-score a {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.save-score span {
+  color: #55595c;
+  font-family: 'Bevan', cursive;
+  font-weight: 100 !important;
+  font-size: 25px;
 }

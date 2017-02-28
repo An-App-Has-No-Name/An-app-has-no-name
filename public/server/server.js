@@ -71,46 +71,50 @@ const server = app.listen(port, function(){
 const io = require('socket.io')(server);
 
 io.on('connection', function (socket) {
-  // socket.emit('user connected');
 
   gameSocket = socket;
-  gameSocket.on('JoinRoom', JoinRoom);
-  gameSocket.on('CreateRoom', CreateRoom);
-  gameSocket.on('fetchQuestions', fetchQuestions);
-  gameSocket.on('openModal', (data) => {
+  socket.on('JoinRoom', JoinRoom);
+  socket.on('fetchUserInfo', (data) => {
+    socket.broadcast.to(data.roomId).emit('gotUserInfo', data);
+  });
+  socket.on('CreateRoom', CreateRoom);
+  socket.on('fetchQuestions', data => {
+
+      //***** At this point we have the questions from the Client
+      //broadcast data.questions and invoke the function receiveMultiplayerQuestions at Client side and send data.questions to Client.
+      console.log("Question from server", data)
+      socket.broadcast.to(data.roomId).emit('receiveMultiplayerQuestions', data);
+  });
+
+  socket.on('openModal', (data) => {
     io.sockets.in(data.roomId).emit('receiveOpenOrder', data);
     socket.broadcast.to(data.roomId).emit('turnChange', {yourTurn: true});
   });
-  gameSocket.on('closeModal', closeModal);
-  gameSocket.on('closeResult', closeResult);
-  gameSocket.on('trackingGame', trackingGame);
-  gameSocket.on('checkRoom', checkRoom);
-  gameSocket.on('gameStart', gameStart);
-  gameSocket.on('message', getMessages);
-  gameSocket.on('changingScore', function(data) {
+  socket.on('closeModal', closeModal);
+  socket.on('closeResult', closeResult);
+  socket.on('trackingGame', trackingGame);
+  socket.on('checkRoom', checkRoom);
+  socket.on('gameStart', gameStart);
+  socket.on('message', getMessages);
+  socket.on('changingScore', (data) => {
 
     socket.broadcast.to(data.roomId).emit('broadcastScore', data);
   });
 
-  gameSocket.on('leaveRoomInMiddle', leaveRoomInMiddle);
+  socket.on('leaveRoomInMiddle', leaveRoomInMiddle);
 
-  gameSocket.on('leaveRoomAndEndGame', function(roomId) {
-    gameSocket.leave(roomId);
+  socket.on('leaveRoomAndEndGame', (roomId) => {
+    socket.leave(roomId);
   });
-  gameSocket.on('disconnect', function(){
-    console.log("User disconnected");
-
+  socket.on('disconnect', () => {
+    console.log("Client disconnected");
   });
-
-  console.log('client connected ', socket.id);
+  console.log("Client connected");
 });
 
 const CreateRoom = function(host){
 
   let roomId = (Math.random() * 10000) | 0;
-
-  console.log("this is room Create", typeof roomId);
-  console.log("this is room CreateString", typeof roomId.toString());
 
   //join to the room
   this.join(roomId.toString());
@@ -123,10 +127,7 @@ const CreateRoom = function(host){
   };
   this.emit('newGameCreated', data);
   io.sockets.emit('newRoomCreated', data);
-  console.log('server create room', roomId, this.id);
-
 };
-
 
 const JoinRoom = function(data){
 
@@ -142,41 +143,19 @@ const JoinRoom = function(data){
     }
 };
 
-const fetchQuestions = function(data) {
-
-
-  //***** At this point we have the questions from the Client
-
-  //broadcast data.questions and invoke the function receiveMultiplayerQuestions at Client side and send data.questions to Client.
-  console.log("Question from server", data)
-  io.sockets.in(data.roomId).emit('receiveMultiplayerQuestions', data);
-};
-
-
-const openModal = function(data) {
-
-  //Invoke the receiveOpenOrder at Client and send back data.modalOpen
-    console.log('opening', data.roomId, data.question);
-
-};
-
 const closeModal = function(data) {
 
   //Invoke the receiveCloseOrder at Client and send back data.modalOpen
   io.sockets.in(data.roomId).emit('receiveCloseOrder', data);
 };
 const closeResult = function(data) {
-  console.log(data);
   io.sockets.in(data.roomId).emit('closeResultOrder', data);
 };
 
 const trackingGame = function(data) {
-  if (data.chosenQuestion === 24) {
+  if (data.chosenQuestion === 25) {
     io.sockets.in(data.roomId).emit('gameOver', {gameOver: true});
     gameSocket.leave(data.roomId);
-  } else {
-
-    console.log('game is going', data.chosenQuestion);
   }
 };
 
@@ -193,18 +172,16 @@ const checkRoom = function(roomId) {
   }
 };
 
-const gameStart = function(data) {
-  this.emit('turnChange', {yourTurn: true});
+const gameStart = function(roomId) {
+  io.sockets.in(roomId).emit('hostStartGame', {roomId: roomId})
+  this.emit('turnChange', {roomId: roomId, yourTurn: true});
 };
 
 const getMessages = function(data){
-  console.log(data);
   io.sockets.emit('message', data);
-  this.emit('turnChange', {yourTurn: true})
 };
 
 const leaveRoomInMiddle = function(roomId) {
-  console.log('sadfhaoisdf', roomId);
   gameSocket.leave(roomId);
   io.sockets.in(roomId).emit('userleaving', {gameOver: true, roomId: roomId});
 };

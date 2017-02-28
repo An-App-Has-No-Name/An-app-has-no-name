@@ -13,7 +13,7 @@ import Promise from 'bluebird';
 import {browserHistory} from 'react-router';
 import { Link } from 'react-router';
 import _ from 'lodash';
-import {customStyles} from '../helpers/lodashHelper.js';
+import {customStyles} from '../helpers/modalStyle.js';
 import Chatbox from './chatbox';
 import { Button, Card, Collapsible, CollapsibleItem, Modal} from 'react-materialize';
 
@@ -47,7 +47,11 @@ class Main extends Component {
     this.changeScore = this.props.changeScore.bind(this);
   }
 
+  componentWillMount() {
+    Socket.disconnect();
+    Socket.connect();
 
+  }
   componentDidMount(){
 
     // this.setState({socket: Socket})
@@ -105,7 +109,6 @@ class Main extends Component {
         this.setState({
           roomId: ''
         });
-          console.log(this.state.roomValid);
 
     } else {
       this.setState({
@@ -166,7 +169,6 @@ class Main extends Component {
   }
 
   receiveMultiplayerQuestions(data) {
-    console.log("broadcasting", data);
       this.fetchQuestionsMultiplayer(data.questions);
   }
 

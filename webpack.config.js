@@ -22,7 +22,10 @@ const config = {
     filename: 'bundle.js',
   },
   debug: true,
-  devtool: 'source-map',
+  cache: true,
+  // devtool: 'inline-eval-cheap-source-map',
+  // devtool: 'source-map',
+  devtool: 'cheap-module-eval-source-map',
   module: {
     loaders: [
       {

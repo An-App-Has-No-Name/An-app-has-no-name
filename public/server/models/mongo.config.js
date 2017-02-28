@@ -8,13 +8,8 @@ const MONGODB  = process.env.MONGODB_URI || require('../config/config').MONGODB;
 
 const mongodb = MONGODB;
 
-// let categories = ['Entertainment: Music', 'General Knowledge'];
 const findDocuments = (db, categoriesList, callback) => {
   const collection = db.collection('questions');
-  // const randomC = collection.count()
-  // const rand = Math.floor( Math.random() * randomC );
-
-  console.log("this is list of cat", categoriesList)
   collection.find({category: { $in: categoriesList}}).toArray((err, questions) => {
     assert.equal(err, null);
     callback(questions, categoriesList);
@@ -22,10 +17,8 @@ const findDocuments = (db, categoriesList, callback) => {
 };
 const findDocumentsRandCat = (db, callback) => {
   const collection = db.collection('questions');
-  // const randomC = collection.count()
-  // const rand = Math.floor( Math.random() * randomC );
+
   let categoriesList = utils.getRandomCategories();
-  console.log("this is list of cat", categoriesList)
   collection.find({category: { $in: categoriesList}}).toArray((err, questions) => {
     assert.equal(err, null);
     callback(questions, categoriesList);
@@ -46,6 +39,7 @@ module.exports = {
       });
     });
   },
+  
   findQuestionRandCat: (callback) => {
     MongoClient.connect(mongodb, (err, db) => {
       assert.equal(null, err);
@@ -55,4 +49,4 @@ module.exports = {
       });
     });
   }
-}
+};

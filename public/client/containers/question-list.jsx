@@ -9,8 +9,9 @@ import Socket from '../socket';
 import ReactCountDownClock from 'react-countdown-clock';
 import ResultDetail from './result-detail';
 import * as audio from '../audio';
-import {customStyles} from '../helpers/lodashHelper.js';
+import {customStyles} from '../helpers/modalStyle.js';
 import path from 'path';
+import { Button } from 'react-materialize';
 
 const ReactToastr = require("react-toastr");
 const {ToastContainer} = ReactToastr;
@@ -29,8 +30,10 @@ class QuestionList extends Component {
       p2ScoreResultModal: "0",
       answerResultModal: '',
       gameOver: false,
+      playerTwoName: 'Opponent',
       playerTwoScore: 0,
       yourTurn: false,
+      roomId: null
     };
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
@@ -50,10 +53,10 @@ class QuestionList extends Component {
   }
 
   componentWillUnmount() {
-    console.log(this.state.roomId)
     if (this.state.roomId) {
       this.changeScore(0);
       this.leaveRoomInMiddle();
+      this.reset();
     }
   }
 
@@ -64,21 +67,22 @@ class QuestionList extends Component {
       return 'Your work is not saved! Are you sure you want to leave?';
     }
   }
-
   componentWillMount() {
-      Socket.on('receiveMultiplayerQuestions', (data) => {
-        this.setState({roomId: data.roomId});
-      });
-
-      Socket.on('playerJoined', (data) => {
-        this.setState({roomId: data.roomId});
-      });
+    Socket.on('hostStartGame', data => {
+      this.setState({roomId: data.roomId});
+      Materialize.toast('The game started', 4000);
+    });
   }
-
+  componentWillReceiveProps() {
+    // console.log('Player 2 componentWillReceiveProps', this.state.playerTwoName, this.props.opponentInfo);
+      if (this.props.opponentInfo) {
+        this.setState({playerTwoName:this.props.opponentInfo.username})
+    };
+  }
 componentDidMount() {
-  this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave)
+  this.props.router.setRouteLeaveHook(this.props.route, this.routerWillLeave);
+
   Socket.on('receiveOpenOrder', (data) => {
-    console.log(data);
     this.setState({
       modalOpen: !data.modalOpen,
       chosenQuestion: [data.question._id, ...this.state.chosenQuestion],
@@ -106,13 +110,13 @@ componentDidMount() {
   Socket.on('gameOver', this.gameOver);
   Socket.on('turnChange', (data) => {
     //broadcast yourTurn to be true to the other player
+
     this.setState({yourTurn: data.yourTurn});
   });
 
 
 //When a user left
   Socket.on('userleaving', (data) => {
-    console.log('LEaving');
     Materialize.toast('The other player left', 4000);
     //Call gameOver with data
     this.setState({gameOver: true});
@@ -145,11 +149,11 @@ openModal(question) {
     //Check if multiplayer or not
     if (this.state.roomId) {
       Socket.emit('openModal', data);
+
       // Set turn to be false
       this.setState({yourTurn: false});
 
     } else {
-
       //Single Player mode
       this.setState({modalOpen: true});
     }
@@ -163,10 +167,16 @@ openModal(question) {
     const id = localStorage.getItem('id');
     const score = this.props.playerOneScore;
     const username = localStorage.getItem('username');
-
-    const scoreData = { score, id, username }
-    console.log(scoreData, "HERE'S THE SCORE");
-    this.props.saveScore(scoreData)
+    if (username) {
+      // console.log('Username from sendScore(): ', username);
+      const scoreData = { score, id, username }
+      this.props.saveScore(scoreData)
+      localStorage.setItem('score', null);
+      // console.log(scoreData, "Score being saved: " ,scoreData);
+    } else {
+      localStorage.setItem('score', score);
+      console.log("Score can't be saved without username. Username: ", username, score);
+    }
   }
 
 leaveRoomInMiddle() {
@@ -184,7 +194,7 @@ gameOver(data) {
       });
     }
   } else {
-    this.reset();
+    // this.reset();
   }
 }
 
@@ -214,7 +224,7 @@ closeResult(){
 
   // Single Player mode
 
-  if (!this.state.roomId && this.state.singleP.length === 26) {
+  if (!this.state.roomId && this.state.singleP.length === 25) {
       this.setState({gameOver: true});
       this.gameOver();
   }
@@ -232,6 +242,7 @@ closeModal() {
   // Multiplayer
   if (this.state.roomId) {
     Socket.emit('closeModal', data);
+    Socket.emit('trackingGame', data);
   } else {
   // SinglePlayer
     let counter = 0;
@@ -242,7 +253,6 @@ closeModal() {
   }
 
   //Send the data back to Server to broadcast
-  Socket.emit('trackingGame', data);
   this.setState({resultModal:true});
 }
 
@@ -250,17 +260,21 @@ closeModal() {
 closeEndingModal(){
   this.sendScore();
   Socket.emit('leaveRoomAndEndGame', this.state.roomId);
-  this.reset();
-  const url = path.resolve(__dirname, '../../', 'index.html')
-  browserHistory.push(url);
+  // this.reset();
+  // const url = path.resolve(__dirname, '../../', 'index.html');
+  // browserHistory.push(url);
 }
 
+closeEndingModalUnauth() {
+  const score = this.props.playerOneScore;
+  localStorage.setItem('score', score);
+}
 // Questions render
 renderQuestion(questions) {
   const { modalOpen } = this.state;
   return questions.map(question => {
     return (
-      <div className="list-question"
+      <div className="well list-question"
         onClick={(e) => {
             e.preventDefault()
             this.openModal(question)
@@ -336,7 +350,7 @@ renderAllModals() {
   if (this.state.playerTwoScore === this.props.playerOneScore) {
     showWinner = <h3>Draw!</h3>
   } else if (this.state.playerTwoScore > this.props.playerOneScore) {
-    showWinner = <h3>Player 2 wins!</h3>
+    showWinner = <h3>{this.state.playerTwoName} wins!</h3>
   } else {
     showWinner = <h3>You Win!</h3>
   }
@@ -344,20 +358,19 @@ renderAllModals() {
   let loadingView = {
     loading: (
       <div className="loading singleP">
-        <h1>Loading the questions, be ready, calm down, sit tight!...</h1>
+        <h2>Loading the questions, be ready, calm down, sit tight!...</h2>
         <div className="progress">
           <div className="indeterminate"></div>
         </div>
       </div>
-
     ),
     waitingHost: (
       <div className="waitingHost">
-        <h1>Waiting for host, calm down, sit tight... </h1>
+        <h2>Waiting for host, calm down, sit tight... </h2>
         <div className="progress">
           <div className="indeterminate"></div>
         </div>
-        <button onClick={this.closeModal}>Exit</button>
+        <Button onClick={this.closeEndingModal}>Exit</Button>
       </div>
     ),
 
@@ -367,25 +380,42 @@ renderAllModals() {
     },
 
     endingView: function(callback){
+      const url = path.resolve(__dirname, '../../', 'index.html')
       return (
         <div>
-          <h1>Your score: {this.props.playerOneScore}</h1>
+          <h2>Your score: {this.props.playerOneScore}</h2>
           {/* check if Multiplayer mode or not */}
           {this.state.roomId ?
-            <div><h1>Player 2: {this.state.playerTwoScore}</h1>
+            <div><h2>{this.state.playerTwoName}'s score: {this.state.playerTwoScore}</h2>
             {showWinner}</div> : null
           }
-
-          <button onClick={callback}>Go to home page</button>
+          <Link to={url} onClick={callback}>
+            <Button waves='light'>Go to home page</Button>
+          </Link>
+          { this.props.authenticated?
+            <Link to={'/scores/leaderboard'} onClick={callback}>
+              <Button waves='light'>Go to Leaderboard</Button>
+            </Link>
+            :
+            <div>
+              <Link to='/users/signup' onClick={callback}>Sign Up
+                    {/* <Button waves='light'>Sign Up instead</Button> */}
+              </Link>
+              or
+              <Link to='/users/signin' onClick={callback}>Sign In
+                    {/* <Button waves='light'>Sign Up instead</Button> */}
+              </Link>
+              to save score
+            </div>
+          }
         </div>
-        )
-      }.bind(this),
+      )
+    }.bind(this),
 
     questionDetailView: function(callback) {
       return (
         <div>
           <QuestionDetail  closeModal={this.closeModal} roomId={this.state.roomId} getScore={this.getScore}/>
-          <button onClick={callback}>Close</button>
         </div>
       )
     }.bind(this),
@@ -393,16 +423,16 @@ renderAllModals() {
     questionResultView: function(callback) {
       return (
         <div>
-          <ResultDetail  roomId={this.state.roomId} Player1={this.state.p1ScoreResultModal} Player2={this.state.p2ScoreResultModal} Correct={this.state.answerResultModal} />
+          <ResultDetail  playerTwoName={this.state.playerTwoName} roomId={this.state.roomId} Player1={this.state.p1ScoreResultModal} Player2={this.state.p2ScoreResultModal} Correct={this.state.answerResultModal} />
           <ReactCountDownClock
-            seconds={5}
+            seconds={2.5}
             color="#26a69a"
             alpha={1.5}
             showMilliseconds={false}
             size={75}
             onComplete={callback}
           />
-        <button onClick={callback}>Close</button>
+
         </div>
       )
     }.bind(this)
@@ -439,6 +469,7 @@ addAlert (info) {
 
 //react render
 render () {
+   // console.log('p2 from render', this.props.opponentInfo, this.state.playerTwoName);
     return (
       <div className="List-group" key={this.props.questions}>
         <div>
@@ -463,7 +494,9 @@ function mapStateToProps(state){
   return {
     questions: state.QuestionReducer,
     roomId: state.roomId,
-    playerOneScore: state.ScoreReducer
+    playerOneScore: state.ScoreReducer,
+    opponentInfo: state.UserInfoReducer.opponentInfo,
+    authenticated: state.AuthReducer.authenticated,
   };
 }
 

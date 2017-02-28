@@ -19,17 +19,16 @@ module.exports = {
               res.status(200).json({token, data: "You have been signed up!"});
             });
         } else {
-          res.json({ data: 'Username already exists.' });
+          res.status(422).send({error: "Oops! Username already exists!"});
         }
       });
     });
   },
 
-  signin: (req, res) => {  //
+signin: (req, res) => {  //
     User.sync()
     .then((User) => {
-      const username = req.body;
-      const password = req.body;
+      const { username, password } = req.body;
       User.findOne({ where: { username }})
       .then((user) => {
         user.authenticate(password, (err, match) => {
@@ -40,35 +39,18 @@ module.exports = {
             const token = jwt.encode(copyUser, 'secret');
             user.update({token, token})
             .then(() => {
-              res.status(200).json({token, username, id: user.id, data:"You have been logged in!"});
+              console.log("why is it going int errr too?");
+              res.status(200).send({token, username, id: user.id, data:"You have been logged in!"});
             });
           } else {
-            console.log('Invalid password!', err);
-            res.json({ data: 'Invalid password.' })
+            console.log("why is it going int errr too?");
+            res.status(422).send({error:"Oops! Email or password isn't right"});
           }
         })
       });
     });
-  }
-}
+  },
 
-  // checkAuth: function (req, res, next) {
-  //   var token = req.headers['x-access-token'];
-  //   if (!token) {
-  //     next(new Error('No token'));
-  //   } else {
-  //     var user = jwt.decode(token, 'secret');
-  //     var findUser = Q.nbind(User.findOne, User);
-  //     findUser({username: user.username})
-  //       .then(function (foundUser) {
-  //         if (foundUser) {
-  //           res.status(200).send();
-  //         } else {
-  //           res.status(401).send();
-  //         }
-  //       })
-  //       .fail(function (error) {
-  //         next(error);
-  //       });
-  //   }
-  // }
+  signout: (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../', 'index.html'));
+  },

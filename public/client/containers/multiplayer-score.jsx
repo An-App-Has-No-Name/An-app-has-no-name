@@ -1,9 +1,9 @@
 import React, { Component }  from 'react';
 import { connect } from 'react-redux';
-import { changeScore } from '../actions/index';
+import { changeScore, opponentInfo } from '../actions/index';
 import Socket from '../socket';
 
-export default class MultiplayerScore extends Component {
+class MultiplayerScore extends Component {
   constructor(props){
     super(props);
     this.state = {
@@ -17,8 +17,14 @@ componentDidMount(){
   //   this.setState({score: data.score}).bind(this);
   // });
 
+  Socket.on('gotUserInfo', (data) => {
+    // console.log("in gotUserInfo score", data)
+    if (data.username) {
+      this.setState({player2name:data.username})
+      this.props.opponentInfo(data.username, data.roomId)
+    }
+  });
   Socket.on('broadcastScore', (data) => {
-    console.log("in broadcast score", data)
     this.setState({score: data.score});
   });
 }
@@ -38,3 +44,11 @@ componentDidMount(){
     );
   }
 }
+
+// function mapStateToProps(state){
+//   return {
+
+//   };
+// }
+
+export default connect( null, { opponentInfo })(MultiplayerScore)

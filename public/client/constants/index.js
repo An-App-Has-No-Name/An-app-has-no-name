@@ -14,5 +14,8 @@ module.exports = createConstants(
   'RESET_QUESTION',
   'USER_INFO',
   'SCORE_SAVE_SUCCESS',
-  'FETCH_LEADERBOARD'
+  'FETCH_LEADERBOARD',
+  'SIGNIN_SUCCESS',
+  'GET_USER_INFO',
+  'OPPONENT_INFO'
 );

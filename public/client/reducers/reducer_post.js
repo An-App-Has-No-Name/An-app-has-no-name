@@ -17,12 +17,10 @@ export default function(state = null, action) {
     case FETCH_MULTI_QUESTIONS:
       if (action.payload) {
         return action.payload;
-      } else {
-        console.log('need data')
       }
 
     case RESET_QUESTION:
       return null;
-  }
+    }
     return state;
 }
